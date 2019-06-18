@@ -7,7 +7,7 @@ import java.io.Serializable;
  * <p>
  * <b>注意，本类有注入风险，需要严格控制及考虑语法</b>
  * 
- * @author jason<jason@dayima.com> @ May 29, 2018
+ * @author jason
  *
  */
 public class ExprEntry implements Serializable {

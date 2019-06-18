@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * 范围更新时值的设置类，支持裸更新，但尽量小心使用，或通过增加确定的封装方法来不直接在外部实现
  * 
- * @author jason<jason@dayima.com> @ May 29, 2018
+ * @author jason
  *
  */
 public class UpdateEntry implements Serializable {

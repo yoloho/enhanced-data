@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 /**
  * 标记一个bean属性为primary
  * 
- * @author jason<jason@dayima.com> @ May 29, 2018
+ * @author jason
  *
  */
 @Documented  

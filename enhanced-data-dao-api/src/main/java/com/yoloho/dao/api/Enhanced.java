@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 /**
  * 标记一个bean映射表的一些属性，目前主要是非规范的表名字
- * @author jason<jason@dayima.com> Jun 4, 2018
+ * @author jason
  * @Alter by houlf 添加增强类型
  */
 @Documented  
