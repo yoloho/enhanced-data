@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.yoloho</groupId>
+		<artifactId>enhanced-parent</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>enhanced-data-parent</artifactId>
+	<name>enhanced-data-parent</name>
+	<packaging>pom</packaging>
+	<modules>
+		<module>enhanced-data-dao-api</module>
+        <module>enhanced-data-dao</module>
+        <module>enhanced-data-dao-sharding</module>
+        <module>enhanced-data-cache</module>
+	</modules>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <optimize>true</optimize>
+                    <encoding>UTF-8</encoding>
+                    <fork>true</fork>
+                    <useIncrementalCompilation>false</useIncrementalCompilation>
+                    <compilerArgument>-XDignore.symbol.file</compilerArgument>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
