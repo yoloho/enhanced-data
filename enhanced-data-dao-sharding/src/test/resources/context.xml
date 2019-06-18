@@ -1,22 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:spring-common="http://www.dayima.org/schema/spring-common"
-	xmlns:mybatis-common="http://www.dayima.org/schema/mybatis-common"
+	xmlns:enhanced-dao="http://www.dayima.org/schema/enhanced-dao"
 	xsi:schemaLocation="
 	    http://www.springframework.org/schema/beans       http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context     http://www.springframework.org/schema/context/spring-context.xsd
-		http://www.dayima.org/schema/spring-common       http://www.dayima.org/schema/spring-common/spring-common.xsd
-		http://www.dayima.org/schema/mybatis-common       http://www.dayima.org/schema/mybatis-common/mybatis-common.xsd
+		http://www.dayima.org/schema/enhanced-dao         http://www.dayima.org/schema/enhanced-dao/enhanced-dao.xsd
 	"
 	default-autowire="byName">
-	
-	<spring-common:init-defaults skip-scan="true" project-name="mybatis-common" />
-	
-	<spring-common:property-placeholder location="extra.properties" />
-	
-	<mybatis-common:enhanced-dao scan-path="com.yoloho.dao" sql-session-factory="mybatisSessionFactory" />
-	
+	<context:property-placeholder location="extra.properties" />
+	<enhanced-dao:scan scan-path="com.yoloho.data" sql-session-factory="mybatisSessionFactory" />
 	<!-- 数据源 -->
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
 		init-method="init" destroy-method="close">

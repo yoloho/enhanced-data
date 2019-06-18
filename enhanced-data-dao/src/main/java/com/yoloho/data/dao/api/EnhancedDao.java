@@ -8,8 +8,7 @@ import org.apache.ibatis.session.SqlSession;
 
 import com.yoloho.common.annotation.NonNull;
 import com.yoloho.common.annotation.Nullable;
-import com.yoloho.dao.api.UpdateEntry;
-import com.yoloho.dao.api.filter.QueryData;
+import com.yoloho.data.dao.api.filter.QueryData;
 
 /**
  * 增强dao访问组件

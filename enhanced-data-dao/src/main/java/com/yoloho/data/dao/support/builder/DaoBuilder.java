@@ -1,6 +1,6 @@
 package com.yoloho.data.dao.support.builder;
 
-import com.yoloho.dao.api.EnhancedType;
+import com.yoloho.data.dao.api.EnhancedType;
 
 /**
  * EnhancedDao构造器

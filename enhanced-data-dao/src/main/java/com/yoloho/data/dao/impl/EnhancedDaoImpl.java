@@ -26,15 +26,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.yoloho.common.util.StringUtil;
-import com.yoloho.dao.api.FieldName;
-import com.yoloho.dao.api.IgnoreKey;
-import com.yoloho.dao.api.PrimaryKey;
-import com.yoloho.dao.api.UnionPrimaryKey;
-import com.yoloho.dao.api.UpdateEntry;
-import com.yoloho.dao.api.filter.DynamicQueryFilter;
-import com.yoloho.dao.api.filter.QueryData;
 import com.yoloho.data.dao.api.EnhancedDao;
-import com.yoloho.util.ColumnUtil;
+import com.yoloho.data.dao.api.FieldName;
+import com.yoloho.data.dao.api.IgnoreKey;
+import com.yoloho.data.dao.api.PrimaryKey;
+import com.yoloho.data.dao.api.UnionPrimaryKey;
+import com.yoloho.data.dao.api.UpdateEntry;
+import com.yoloho.data.dao.api.filter.DynamicQueryFilter;
+import com.yoloho.data.dao.api.filter.QueryData;
+import com.yoloho.data.dao.util.ColumnUtil;
 
 /**
  * 增强的dao动态操作类
@@ -89,7 +89,7 @@ public class EnhancedDaoImpl<T, PK extends Serializable> extends SqlSessionDaoSu
     /**
      * 各namespace常量
      */
-    private final static String NAMESPACE = "com.yoloho.mybatis.common.dao.namespace.Generic";
+    private final static String NAMESPACE = "com.yoloho.data.dao.namespace.Generic";
     private final static String NAMESPACE_GET = NAMESPACE + ".get";
     private final static String NAMESPACE_INSERT = NAMESPACE + ".insert";
     private final static String NAMESPACE_DELETE = NAMESPACE + ".delete";

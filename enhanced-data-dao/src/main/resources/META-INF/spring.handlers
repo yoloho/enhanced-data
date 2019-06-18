@@ -1,1 +1,1 @@
-http\://www.dayima.org/schema/mybatis-common=com.yoloho.mybatis.common.support.NamespaceHandler
+http\://www.dayima.org/schema/enhanced-dao=com.yoloho.data.dao.support.NamespaceHandler

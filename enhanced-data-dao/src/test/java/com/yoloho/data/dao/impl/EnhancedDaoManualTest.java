@@ -14,9 +14,9 @@ import com.yoloho.data.dao.support.EnhancedConfig;
 import com.yoloho.data.dao.support.EnhancedDaoParser;
 
 /**
- * 简单写的单元测试，直接连了个测试库
+ * Direct connect to jdbc
  * 
- * @author jason<jason@dayima.com> @ May 29, 2018
+ * @author jason
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -30,7 +30,7 @@ public class EnhancedDaoManualTest extends EnhancedDaoImplTest {
         @Override
         public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
             EnhancedConfig config = new EnhancedConfig();
-            config.setScanPath(Arrays.asList("com.yoloho.mybatis.common"));
+            config.setScanPath(Arrays.asList("com.yoloho.data"));
             config.setSqlSessionFactory("mybatisSessionFactory");
             EnhancedDaoParser.scan(config, registry);
         }

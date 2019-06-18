@@ -3,7 +3,8 @@ package com.yoloho.util;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.yoloho.dao.api.IgnoreKey;
+import com.yoloho.data.dao.api.IgnoreKey;
+import com.yoloho.data.dao.util.ColumnUtil;
 
 public class ColumnUtilTest {
     @SuppressWarnings("unused")

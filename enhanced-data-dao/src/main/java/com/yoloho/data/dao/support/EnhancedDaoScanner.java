@@ -21,7 +21,7 @@ public class EnhancedDaoScanner {
     public EnhancedDaoScanner(SqlSessionFactory sqlSessionFactory) throws IOException {
         logger.info("register mapper to {}", sqlSessionFactory);
         try {
-            String[] paths = new String[] {"com/yoloho/mybatis/common/dao/xml/enhanced-dao-generic.xml", "/com/yoloho/mybatis/common/dao/xml/enhanced-dao-generic.xml"};
+            String[] paths = new String[] {"com/yoloho/data/dao/xml/enhanced-dao-generic.xml", "/com/yoloho/data/dao/xml/enhanced-dao-generic.xml"};
             InputStream in = null;
             for (int i = 0; i < paths.length; i ++) {
                 in = EnhancedDaoScanner.class.getClassLoader().getResourceAsStream(paths[i]);

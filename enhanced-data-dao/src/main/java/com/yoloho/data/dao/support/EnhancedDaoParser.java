@@ -18,9 +18,9 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import com.google.common.collect.Sets;
-import com.yoloho.dao.api.Enhanced;
-import com.yoloho.dao.api.EnhancedType;
-import com.yoloho.dao.api.PrimaryKey;
+import com.yoloho.data.dao.api.Enhanced;
+import com.yoloho.data.dao.api.EnhancedType;
+import com.yoloho.data.dao.api.PrimaryKey;
 import com.yoloho.data.dao.support.builder.BeanWrapper;
 import com.yoloho.data.dao.support.builder.BuildContext;
 import com.yoloho.data.dao.support.builder.DaoBuilder;

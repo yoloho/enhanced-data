@@ -6,7 +6,7 @@ public class NamespaceHandler extends NamespaceHandlerSupport {
 
     @Override
     public void init() {
-        registerBeanDefinitionParser("dao", new EnhancedDaoParser());
+        registerBeanDefinitionParser("scan", new EnhancedDaoParser());
     }
 
 }

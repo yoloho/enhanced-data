@@ -12,10 +12,11 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.yoloho.common.util.JoinerSplitters;
-import com.yoloho.dao.api.ExprEntry;
-import com.yoloho.dao.api.IgnoreKey;
-import com.yoloho.dao.api.filter.FieldCommand.Operator;
-import com.yoloho.dao.api.filter.FieldCommand.Type;
+import com.yoloho.data.dao.api.ExprEntry;
+import com.yoloho.data.dao.api.IgnoreKey;
+import com.yoloho.data.dao.api.filter.DynamicQueryFilter;
+import com.yoloho.data.dao.api.filter.FieldCommand.Operator;
+import com.yoloho.data.dao.api.filter.FieldCommand.Type;
 
 public class DynamicQueryFilterTest {
     private static void _dumpResult(String title, DynamicQueryFilter filter, String sql) {

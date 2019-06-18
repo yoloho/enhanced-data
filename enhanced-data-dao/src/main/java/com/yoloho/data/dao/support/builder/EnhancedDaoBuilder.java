@@ -6,14 +6,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 
 import com.yoloho.common.util.StringUtil;
-import com.yoloho.dao.api.Enhanced;
-import com.yoloho.dao.api.EnhancedType;
+import com.yoloho.data.dao.api.Enhanced;
+import com.yoloho.data.dao.api.EnhancedType;
 import com.yoloho.data.dao.impl.EnhancedDaoImpl;
 import com.yoloho.data.dao.support.EnhancedDaoConstants;
 
 import io.github.lukehutch.fastclasspathscanner.scanner.AnnotationInfo;
-import io.github.lukehutch.fastclasspathscanner.scanner.ClassInfo;
 import io.github.lukehutch.fastclasspathscanner.scanner.AnnotationInfo.AnnotationParamValue;
+import io.github.lukehutch.fastclasspathscanner.scanner.ClassInfo;
 
 public class EnhancedDaoBuilder implements DaoBuilder{
 

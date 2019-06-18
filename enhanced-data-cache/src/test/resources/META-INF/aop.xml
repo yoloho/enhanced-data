@@ -1,0 +1,13 @@
+<!DOCTYPE aspectj PUBLIC
+        "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj1.dtd">
+<!-- 这个文件只能在指定了javaagent=aspectjweaver.jar的时候才起效 -->
+<aspectj>
+    <weaver options="-verbose">
+        <!-- only weave classes in our application-specific packages -->
+        <include within="com.yoloho..*" />
+    </weaver>
+    <aspects>
+        <!-- weave in just this aspect -->
+        <aspect name="com.yoloho.cache.support.CacheAspectJPointcut" />
+    </aspects>
+</aspectj>

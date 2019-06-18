@@ -1,1 +1,1 @@
-http\://www.dayima.org/schema/mybatis-common/mybatis-common.xsd=com/yoloho/mybatis/common/support/mybatis-common.xsd
+http\://www.dayima.org/schema/enhanced-dao/enhanced-dao.xsd=com/yoloho/data/dao/support/enhanced-dao.xsd

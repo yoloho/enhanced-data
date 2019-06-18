@@ -16,9 +16,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.yoloho.dao.api.UpdateEntry;
-import com.yoloho.dao.api.filter.DynamicQueryFilter;
 import com.yoloho.data.dao.api.EnhancedDao;
+import com.yoloho.data.dao.api.UpdateEntry;
+import com.yoloho.data.dao.api.filter.DynamicQueryFilter;
 import com.yoloho.data.dao.impl.EnhancedDaoImpl;
 import com.yoloho.data.dao.impl.EnhancedDaoImplTest.UnitTestUser;
 import com.yoloho.data.dao.impl.EnhancedDaoImplTest.UnitTestUserMapping;
@@ -26,9 +26,9 @@ import com.yoloho.data.dao.impl.EnhancedDaoImplTest.UnitTestUserMapping;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:context.xml")
 /**
- * 简单写的EnhancedDao demo
+ * EnhancedDao demo
  * 
- * @author jason<jason@dayima.com> @ May 29, 2018
+ * @author jason
  *
  */
 public class EnhancedDaoDemoTest {

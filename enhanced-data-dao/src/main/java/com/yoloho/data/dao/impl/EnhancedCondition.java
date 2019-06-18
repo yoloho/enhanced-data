@@ -3,7 +3,7 @@ package com.yoloho.data.dao.impl;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.yoloho.dao.api.filter.QueryData;
+import com.yoloho.data.dao.api.filter.QueryData;
 
 public class EnhancedCondition extends QueryData {
     private static final long serialVersionUID = 1L;

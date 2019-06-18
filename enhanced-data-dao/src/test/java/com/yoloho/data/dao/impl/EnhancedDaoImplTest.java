@@ -22,12 +22,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.yoloho.common.util.Logging;
-import com.yoloho.dao.api.IgnoreKey;
-import com.yoloho.dao.api.PrimaryKey;
-import com.yoloho.dao.api.UnionPrimaryKey;
-import com.yoloho.dao.api.UpdateEntry;
-import com.yoloho.dao.api.filter.DynamicQueryFilter;
-import com.yoloho.dao.api.filter.FieldCommand.Operator;
+import com.yoloho.data.dao.api.IgnoreKey;
+import com.yoloho.data.dao.api.PrimaryKey;
+import com.yoloho.data.dao.api.UnionPrimaryKey;
+import com.yoloho.data.dao.api.UpdateEntry;
+import com.yoloho.data.dao.api.filter.DynamicQueryFilter;
 
 /**
  * 简单写的单元测试，直接连了个测试库
