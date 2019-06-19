@@ -7,6 +7,7 @@ public class NamespaceHandler extends NamespaceHandlerSupport {
     @Override
     public void init() {
         registerBeanDefinitionParser("scan", new EnhancedDaoParser());
+        registerBeanDefinitionParser("druid-monitor", new EnhancedDaoParser());
     }
 
 }

@@ -1,9 +1,12 @@
-package com.yoloho.data.dao.support;
+package com.yoloho.data.dao.config;
 
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.DeferredImportSelector;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
+
+import com.yoloho.data.dao.support.EnhancedConfig;
+import com.yoloho.data.dao.support.EnhancedDaoParser;
 
 /**
  * @author jason

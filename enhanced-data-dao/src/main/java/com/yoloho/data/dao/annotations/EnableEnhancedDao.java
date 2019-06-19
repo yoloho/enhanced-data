@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
-import com.yoloho.data.dao.support.EnableEnhancedDaoConfiguration;
+import com.yoloho.data.dao.config.EnableEnhancedDaoConfiguration;
 
 @Inherited
 @Documented

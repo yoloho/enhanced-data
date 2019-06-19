@@ -7,15 +7,16 @@
 	<xsd:element name="scan">
 		<xsd:annotation>
 			<xsd:documentation><![CDATA[
-			初始化EnhancedDao
+			Scan and generate EnhancedDao beans
 			]]></xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:attribute name="scan-path">
 				<xsd:annotation>
 					<xsd:documentation><![CDATA[
-					设置要扫描的路径，多个路径用英文逗号分隔
-					需要依据其生成对应dao的bean封装列表，命名规则为XXXXEnhancedDao
+					Path to scan the model beans and using comma to separate multiple paths.
+					If any models fetched their name will be "XXXXEnhancedDao" which "EnhancedDao"
+                    is the postfix property you can set.
 					]]></xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
@@ -25,17 +26,17 @@
 			<xsd:attribute name="sql-session-factory">
 				<xsd:annotation>
 					<xsd:documentation><![CDATA[
-					需要使用的sqlSessionFactory
+					The sqlSessionFactory bean referenced
 					]]></xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string" />
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="postfix">
+			<xsd:attribute name="postfix" default="EnhancedDao">
 				<xsd:annotation>
 					<xsd:documentation><![CDATA[
-					织入dao bean时附加的后缀，默认为EnhancedDao
+					The postfix injecting bean of dao, default to EnhancedDao
 					]]></xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
@@ -44,4 +45,44 @@
 			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
+    <xsd:element name="druid-monitor">
+        <xsd:annotation>
+            <xsd:documentation><![CDATA[
+            Monitor the druid pool
+            ]]></xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="projectName">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Project name to identify the monitor data
+                    ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string" />
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="callback">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Callback which implements MonitorCallback to receive the data.
+                    Leave empty indicating to use the default implementation which will use open-falcon backend.
+                    ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string" />
+                </xsd:simpleType>
+            </xsd:attribute>
+            <xsd:attribute name="interval" default="60">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    In seconds. Interval to do monitoring.
+                    ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:int" />
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
 </xsd:schema>
