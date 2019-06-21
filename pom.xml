@@ -10,7 +10,11 @@
     </parent>
     <artifactId>enhanced-data-parent</artifactId>
     <name>enhanced-data-parent</name>
+    <version>${enhanced_data_revision}</version>
     <packaging>pom</packaging>
+    <properties>
+        <enhanced_data_revision>1.0.0</enhanced_data_revision>
+    </properties>
     <modules>
         <module>enhanced-data-dao-api</module>
         <module>enhanced-data-dao</module>

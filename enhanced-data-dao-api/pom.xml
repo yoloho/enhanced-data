@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.yoloho</groupId>
 		<artifactId>enhanced-data-parent</artifactId>
-		<version>1.0.0</version>
+		<version>${enhanced_data_revision}</version>
 	</parent>
 	<artifactId>enhanced-data-dao-api</artifactId>
 	<name>enhanced-data-dao-api</name>

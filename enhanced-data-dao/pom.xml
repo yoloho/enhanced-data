@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.yoloho</groupId>
         <artifactId>enhanced-data-parent</artifactId>
-        <version>1.0.0</version>
+        <version>${enhanced_data_revision}</version>
     </parent>
     <artifactId>enhanced-data-dao</artifactId>
     <name>enhanced-data-dao</name>
@@ -19,7 +19,7 @@
         <dependency>
             <groupId>com.yoloho</groupId>
             <artifactId>enhanced-data-dao-api</artifactId>
-            <version>${project.version}</version>
+            <version>${enhanced_data_revision}</version>
         </dependency>
         <!-- commons -->
         <dependency>

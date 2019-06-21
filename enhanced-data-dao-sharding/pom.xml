@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.yoloho</groupId>
         <artifactId>enhanced-data-parent</artifactId>
-        <version>1.0.0</version>
+        <version>${enhanced_data_revision}</version>
     </parent>
     <artifactId>enhanced-data-dao-sharding</artifactId>
     <name>enhanced-data-dao-sharding</name>
@@ -16,12 +16,12 @@
         <dependency>
             <groupId>com.yoloho</groupId>
             <artifactId>enhanced-data-dao</artifactId>
-            <version>${project.version}</version>
+            <version>${enhanced_data_revision}</version>
         </dependency>
         <dependency>
             <groupId>com.yoloho</groupId>
             <artifactId>enhanced-data-dao-api</artifactId>
-            <version>${project.version}</version>
+            <version>${enhanced_data_revision}</version>
         </dependency>
         <!-- unit test -->
         <dependency>
