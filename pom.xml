@@ -4,11 +4,11 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.yoloho.parent</groupId>
+        <groupId>com.yoloho.enhanced.parent</groupId>
         <artifactId>enhanced-parent</artifactId>
         <version>1.0.0</version>
     </parent>
-    <groupId>com.yoloho.data</groupId>
+    <groupId>com.yoloho.enhanced.data</groupId>
     <artifactId>enhanced-data-parent</artifactId>
     <name>enhanced-data-parent</name>
     <version>${revision}</version>
