@@ -11,7 +11,7 @@
 		http://www.dayima.org/schema/enhanced-cache       http://www.dayima.org/schema/enhanced-cache/enhanced-cache.xsd
 	" default-autowire="byName">
 	<enhanced-cache:init namespace="test1" redis-ref="redisTemplate" use-aspectj="false" />
-	<context:component-scan base-package="com.yoloho.cache" />
+	<context:component-scan base-package="com.yoloho.enhanced.cache" />
 	<bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
         <property name="maxTotal" value="100"/>
         <property name="maxIdle" value="10"/>

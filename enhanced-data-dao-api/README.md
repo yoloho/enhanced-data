@@ -177,7 +177,7 @@ dao.setTableName(UnitTestUser.class);
 ```
 *注意，在使用除xml扫描初始化以外的方式初始化时，mybatis定义时需要修改mapperLocations*，加入：
 ```
-com/yoloho/mybatis/common/dao/xml/enhanced-dao-generic.xml
+com/yoloho/enhanced/data/dao/xml/enhanced-dao-generic.xml
 ```
 
 ### xml初始化

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.yoloho.enhanced.data.dao.namespace.Generic">
+    <!-- 这里的columns为map，为了避免命名冲突需要用get取元素 -->
+	<insert id="insert" parameterType="hashmap" keyProperty="autoIncrementKey"
+		useGeneratedKeys="true">
+		${insertOperation} `${genericTableName}` <foreach collection="properyNameList" index="index" item="item" open="("
+			separator="," close=")"><if test="data[item] != null">`${columns.get(item).columnName}`</if></foreach> values
+		<foreach collection="properyNameList" index="i" item="item" open="("
+				separator="," close=")"><if test="data[item] != null">#{data.${item}}</if></foreach>
+	</insert>
+	<!-- delete增加map方法，但要控制安全性，初步考虑使用limit -->
+	<delete id="delete" parameterType="hashmap">
+	    delete from `${genericTableName}` <where>${WhereSQL}</where> ${SortSQL} limit #{LimitCount}
+	</delete>
+	<select id="get" parameterType="hashmap" resultType="hashmap">
+	    select ${genericFields} from `${genericTableName}` <where>${WhereSQL}</where> ${SortSQL} <if test="LimitCount"> limit #{LimitStart}, #{LimitCount}</if>
+	</select>
+	<!-- update方法，同样出于安全角度考虑，增加limit，但引入了sort支持，但用这个属性可能带来额外的性能问题，需要留意 -->
+    <!-- 这里的columns为map，为了避免命名冲突需要用get取元素 -->
+	<update id="update" parameterType="hashmap">
+	    update `${genericTableName}` set
+		<foreach collection="properyNameList" index="i" item="item"
+				separator=",">`${columns.get(item).columnName}`=#{data.${item}}</foreach> <where>${WhereSQL}</where> ${SortSQL} limit #{LimitCount}
+	</update>
+    <!-- 这里的data/columns均为map，为了避免命名冲突需要用get取元素 -->
+	<update id="updateByFilter" parameterType="hashmap">
+	    update `${genericTableName}` set
+		<foreach collection="properyNameList" index="i" item="item"
+				separator=","><if test="data.get(item).plain">`${columns.get(item).columnName}`=${data.get(item).value}</if><if test="!data.get(item).plain">`${columns.get(item).columnName}`=#{data[${item}].value}</if></foreach> <where>${WhereSQL}</where> ${SortSQL} limit #{LimitCount}
+	</update>
+</mapper>

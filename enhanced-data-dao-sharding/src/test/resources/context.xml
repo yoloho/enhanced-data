@@ -9,7 +9,7 @@
 	"
 	default-autowire="byName">
 	<context:property-placeholder location="extra.properties" />
-	<enhanced-dao:scan scan-path="com.yoloho.data" sql-session-factory="mybatisSessionFactory" />
+	<enhanced-dao:scan scan-path="com.yoloho.enhanced.data" sql-session-factory="mybatisSessionFactory" />
 	<!-- 数据源 -->
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
 		init-method="init" destroy-method="close">

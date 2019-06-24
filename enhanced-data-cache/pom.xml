@@ -132,7 +132,7 @@
                     <verbose>false</verbose>
                     <outxml>true</outxml>
                     <includes>
-                        <include>com.yoloho.cache.support.CacheAspectJPointcut</include>
+                        <include>com.yoloho.enhanced.cache.support.CacheAspectJPointcut</include>
                     </includes>
                 </configuration>
                 <executions>

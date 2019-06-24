@@ -9,7 +9,7 @@
 		http://www.dayima.org/schema/enhanced-dao       http://www.dayima.org/schema/enhanced-dao/enhanced-dao.xsd
 	" default-autowire="byName">
 	<context:property-placeholder location="extra.properties"/>
-    <bean class="com.yoloho.data.dao.impl.EnhancedDaoManualTest.Bean" />
+    <bean class="com.yoloho.enhanced.data.dao.impl.EnhancedDaoManualTest.Bean" />
 	<!-- 数据源 -->
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
 

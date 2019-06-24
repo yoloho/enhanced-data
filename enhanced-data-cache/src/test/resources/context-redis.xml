@@ -26,7 +26,7 @@
         <property name="connectionFactory" ref="redisConnectionFactory" />
     </bean>
 
-    <bean id="redisService" class="com.yoloho.data.cache.redis.RedisServiceImpl">
+    <bean id="redisService" class="com.yoloho.enhanced.data.cache.redis.RedisServiceImpl">
         <property name="redisTemplate" ref="redisTemplate" />
         <property name="redisQueueTemplate" ref="redisTemplate" />
     </bean>

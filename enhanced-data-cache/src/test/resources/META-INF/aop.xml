@@ -8,6 +8,6 @@
     </weaver>
     <aspects>
         <!-- weave in just this aspect -->
-        <aspect name="com.yoloho.cache.support.CacheAspectJPointcut" />
+        <aspect name="com.yoloho.enhanced.cache.support.CacheAspectJPointcut" />
     </aspects>
 </aspectj>

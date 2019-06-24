@@ -46,7 +46,7 @@ Whether to use aspectj
 		http://www.dayima.org/schema/enhanced-cache      http://www.dayima.org/schema/enhanced-cache/enhanced-cache.xsd
 	" default-autowire="byName">
 	<enhanced-cache:init namespace="test1" redis-ref="redisTemplate" />
-	<context:component-scan base-package="com.yoloho.cache" />
+	<context:component-scan base-package="com.yoloho.enhanced.cache" />
 	<bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
         <property name="maxTotal" value="100"/>
         <property name="maxIdle" value="10"/>
@@ -186,7 +186,7 @@ public class Demo {
 给出一个单元测试定义的示例：
 
 ```java
-package com.yoloho.cache;
+package com.yoloho.enhanced.cache;
 
 import java.io.Serializable;
 
@@ -210,7 +210,7 @@ public class Item implements Serializable {
 ```
 
 ```java
-package com.yoloho.cache;
+package com.yoloho.enhanced.cache;
 
 import java.util.List;
 
@@ -218,9 +218,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
-import com.yoloho.cache.annotation.EnableCache;
-import com.yoloho.cache.annotation.EnableCacheBoolean;
-import com.yoloho.cache.annotation.EnableCacheConfig;
+import com.yoloho.enhanced.cache.annotation.EnableCache;
+import com.yoloho.enhanced.cache.annotation.EnableCacheBoolean;
+import com.yoloho.enhanced.cache.annotation.EnableCacheConfig;
 
 @Service
 @EnableCacheConfig(group = "newgroup", expire = 77, local = EnableCacheBoolean.ENABLE, remote = EnableCacheBoolean.ENABLE)
