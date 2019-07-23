@@ -257,7 +257,7 @@ public class RedisServiceImpl implements RedisService {
     
     @Override
     public <T> T listPop(String key, Class<T> clz) {
-        return RedisUtil.toObject(key, clz);
+        return RedisUtil.toObject(listPop(key), clz);
     }
 
     @Override

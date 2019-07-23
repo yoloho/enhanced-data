@@ -108,10 +108,16 @@ public class RedisServiceTest {
         redisService.listPush(queue, "test");
         redisService.listPush(queue, 123);
         assertEquals(2, redisService.listSize(queue));
+        
         List<String> list = redisService.listRange(queue, 0, 0);
         assertEquals(1, list.size());
         assertEquals(2, redisService.listSize(queue));
         assertEquals("test", list.get(0));
+        
+        List<Integer> list1 = redisService.listRange(queue, 0, 1, Integer.class);
+        assertNull(list1.get(0));
+        assertEquals(new Integer(123), list1.get(1));
+        
         redisService.listTrim(queue, 1, -1);
         assertEquals(1, redisService.listSize(queue));
         assertEquals("123", redisService.listPop(queue));
@@ -189,6 +195,11 @@ public class RedisServiceTest {
         assertNotNull(list);
         assertEquals(2, list.size());
         assertEquals("a", list.get(0).getLeft());
+        
+        List<Pair<Integer, Double>> list1 = redisService.sortedSetScan(key, 100, Integer.class);
+        assertNotNull(list1);
+        assertEquals(2, list1.size());
+        assertNull(list1.get(0).getLeft());
         
         redisService.delete(key);
     }
