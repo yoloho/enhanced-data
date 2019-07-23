@@ -50,24 +50,28 @@ public class RedisUtil {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static <T> T toObject(byte[] bytes, Class<T> clazz) {
-        if (bytes == null) {
+    public static <T> T toObject(String str, Class<T> clazz) {
+        if (str == null) {
             return null;
         }
         if (String.class.isAssignableFrom(clazz)) {
-            return (T)new String(bytes);
+            return (T)str;
         }
         for (int i = 0; i < primativeClass.length; i++) {
             if (primativeClass[i].isAssignableFrom(clazz)) {
                 if (primativeClassValueOf[i] != null) {
                     try {
-                        return (T)primativeClassValueOf[i].invoke(clazz, new String(bytes));
+                        return (T)primativeClassValueOf[i].invoke(clazz, str);
                     } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                     }
                 }
             }
         }
-        return JSON.parseObject(bytes, clazz);
+        try {
+            return JSON.parseObject(str, clazz);
+        } catch (Exception e) {
+        }
+        return null;
     }
     /**
      * object -> string

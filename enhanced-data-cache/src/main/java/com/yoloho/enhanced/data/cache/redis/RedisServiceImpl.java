@@ -28,7 +28,6 @@ import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.yoloho.enhanced.data.cache.redis.api.RedisService;
 import com.yoloho.enhanced.data.cache.redis.support.RedisUtil;
 
@@ -57,6 +56,11 @@ public class RedisServiceImpl implements RedisService {
         Preconditions.checkNotNull(key, "Key should not be null");
         return redisTemplate.opsForValue().get(key);
     }
+    
+    @Override
+    public <T> T get(String key, Class<T> clz) {
+        return RedisUtil.toObject(get(key), clz);
+    }
 
     @Override
     public List<String> mget(Collection<String> keys) {
@@ -65,6 +69,13 @@ public class RedisServiceImpl implements RedisService {
             return Collections.emptyList();
         }
         return redisTemplate.opsForValue().multiGet(keys);
+    }
+    
+    @Override
+    public <T> List<T> mget(Collection<String> keys, Class<T> clz) {
+        return mget(keys).stream()
+                .map(str -> RedisUtil.toObject(str, clz))
+                .collect(Collectors.toList());
     }
     
     @Override
@@ -243,10 +254,26 @@ public class RedisServiceImpl implements RedisService {
         Preconditions.checkNotNull(key, "Key should not be null");
         return redisTemplate.opsForList().leftPop(key);
     }
+    
+    @Override
+    public <T> T listPop(String key, Class<T> clz) {
+        return RedisUtil.toObject(key, clz);
+    }
 
     @Override
     public List<String> listRange(String key, int start, int end) {
-        return redisTemplate.opsForList().range(key, start, end);
+        List<String> list = redisTemplate.opsForList().range(key, start, end);
+        if (list == null || list.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return list;
+    }
+    
+    @Override
+    public <T> List<T> listRange(String key, int start, int end, Class<T> clz) {
+        return listRange(key, start, end).stream()
+                .map(str -> RedisUtil.toObject(str, clz))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -316,17 +343,46 @@ public class RedisServiceImpl implements RedisService {
         }
         return list;
     }
+    
+    @Override
+    public <T> List<Pair<T, Double>> sortedSetScan(String key, long count, Class<T> clz) {
+        return sortedSetScan(key, count).stream()
+                .map(pair -> Pair.of(RedisUtil.toObject(pair.getLeft(), clz), pair.getRight()))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public Set<String> sortedSetRange(String key, int indexFrom, int indexTo) {
         Preconditions.checkNotNull(key, "Key should not be null");
-        return redisTemplate.opsForZSet().range(key, indexFrom, indexTo);
+        Set<String> values = redisTemplate.opsForZSet().range(key, indexFrom, indexTo);
+        if (values == null || values.isEmpty()) {
+            return Collections.emptySet();
+        }
+        return values;
+    }
+    
+    @Override
+    public <T> Set<T> sortedSetRange(String key, int indexFrom, int indexTo, Class<T> clz) {
+        return sortedSetRange(key, indexFrom, indexTo).stream()
+                .map(str -> RedisUtil.toObject(str, clz))
+                .collect(Collectors.toSet());
     }
 
     @Override
     public Set<String> sortedSetRangeReverse(String key, long start, long end) {
         Preconditions.checkNotNull(key, "Key should not be null");
-        return redisTemplate.opsForZSet().reverseRange(key, start, end);
+        Set<String> values = redisTemplate.opsForZSet().reverseRange(key, start, end);
+        if (values == null || values.isEmpty()) {
+            return Collections.emptySet();
+        }
+        return values;
+    }
+    
+    @Override
+    public <T> Set<T> sortedSetRangeReverse(String key, long start, long end, Class<T> clz) {
+        return sortedSetRangeReverse(key, start, end).stream()
+                .map(str -> RedisUtil.toObject(str, clz))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -393,7 +449,7 @@ public class RedisServiceImpl implements RedisService {
             public List<String> doInRedis(RedisConnection connection) {
                 byte[] hashKeySerial = getRedisSerializer().serialize(key);
                 List<byte[]> results = connection.hVals(hashKeySerial);
-                List<String> vals = Lists.newArrayList();
+                List<String> vals = new ArrayList<>();
                 if (results != null && results.size() > 0) {
                     for (byte[] bytes : results) {
                         vals.add(new String(bytes));
@@ -402,6 +458,13 @@ public class RedisServiceImpl implements RedisService {
                 return vals;
             }
         });
+    }
+    
+    @Override
+    public <T> List<T> hashValues(String key, Class<T> clz) {
+        return hashValues(key).stream()
+                .map(str -> RedisUtil.toObject(str, clz))
+                .collect(Collectors.toList());
     }
     
     @Override
@@ -443,6 +506,13 @@ public class RedisServiceImpl implements RedisService {
     }
     
     @Override
+    public <T> Set<T> hashKeys(String key, Class<T> clz) {
+        return hashKeys(key).stream()
+                .map(str -> RedisUtil.toObject(str, clz))
+                .collect(Collectors.toSet());
+    }
+    
+    @Override
     public String hashGet(String key, String hashKey) {
         Preconditions.checkNotNull(key, "Key should not be null");
         Preconditions.checkNotNull(hashKey, "HashKey should not be null");
@@ -451,6 +521,11 @@ public class RedisServiceImpl implements RedisService {
             return null;
         }
         return result.toString();
+    }
+    
+    @Override
+    public <T> T hashGet(String key, String hashKey, Class<T> clz) {
+        return RedisUtil.toObject(hashGet(key, hashKey), clz);
     }
     
     @Override
@@ -468,6 +543,13 @@ public class RedisServiceImpl implements RedisService {
     }
     
     @Override
+    public <T> List<T> hashMultiGet(String key, Collection<String> hashKeys, Class<T> clz) {
+        return hashMultiGet(key, hashKeys).stream()
+                .map(str -> RedisUtil.toObject(str, clz))
+                .collect(Collectors.toList());
+    }
+    
+    @Override
     public Map<String, String> hashGetAll(String key) {
         Preconditions.checkNotNull(key, "Key should not be null");
         Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
@@ -478,6 +560,20 @@ public class RedisServiceImpl implements RedisService {
         for (Entry<Object, Object> entry : map.entrySet()) {
             newMap.put(RedisUtil.toString(entry.getKey()), 
                     RedisUtil.toString(entry.getValue()));
+        }
+        return newMap;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> Map<String, T> hashGetAll(String key, Class<T> clz) {
+        Map<String, String> map = hashGetAll(key);
+        if (map.isEmpty()) {
+            return (Map<String, T>) map;
+        }
+        Map<String, T> newMap = new HashMap<>(map.size());
+        for (Entry<String, String> entry : map.entrySet()) {
+            newMap.put(entry.getKey(), RedisUtil.toObject(entry.getValue(), clz));
         }
         return newMap;
     }

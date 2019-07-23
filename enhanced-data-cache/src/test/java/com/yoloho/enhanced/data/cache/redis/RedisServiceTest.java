@@ -51,16 +51,25 @@ public class RedisServiceTest {
         String key = "test_ut_ddddd";
         redisService.delete(key);
         assertNull(redisService.get(key));
+        assertNull(redisService.get(key, Integer.class));
         redisService.set(key, "ddd", 333);
         assertEquals("ddd", redisService.get(key));
         redisService.set(key, 123);
         assertEquals("123", redisService.get(key));
+        assertEquals(new Integer(123), redisService.get(key, Integer.class));
         redisService.set(key, false);
         assertEquals("false", redisService.get(key));
+        
         List<String> list = redisService.mget(Arrays.asList(key));
         assertNotNull(list);
         assertEquals(1, list.size());
         assertEquals("false", list.get(0));
+        
+        List<Boolean> list1 = redisService.mget(Arrays.asList(key), Boolean.class);
+        assertNotNull(list1);
+        assertEquals(1, list1.size());
+        assertFalse(list1.get(0));
+        
         assertFalse(redisService.setIfAbsent(key, "ddd", 3333));
         assertEquals("false", redisService.get(key));
         redisService.delete(key);
@@ -90,10 +99,12 @@ public class RedisServiceTest {
         assertEquals(0, redisService.listSize(queue));
         redisService.listPush(queue, "test");
         redisService.listPush(queue, 123);
-        assertEquals(2, redisService.listSize(queue));
+        redisService.listPush(queue, 122);
+        assertEquals(3, redisService.listSize(queue));
         assertEquals("test", redisService.listPop(queue));
-        assertEquals(1, redisService.listSize(queue));
+        assertEquals(2, redisService.listSize(queue));
         assertEquals("123", redisService.listPop(queue));
+        assertEquals(new Integer(122), redisService.listPop(queue, Integer.class));
         redisService.listPush(queue, "test");
         redisService.listPush(queue, 123);
         assertEquals(2, redisService.listSize(queue));

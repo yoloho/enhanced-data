@@ -35,12 +35,12 @@ public class RedisUtilTest {
     @Test
     public void toObjectTest() {
         assertNull(RedisUtil.toObject(null, Integer.class));
-        assertEquals(new Integer(33), RedisUtil.toObject("33".getBytes(), Integer.class));
-        assertEquals(new Long(33), RedisUtil.toObject("33".getBytes(), Long.class));
-        assertEquals(new Double(33), RedisUtil.toObject("33".getBytes(), Double.class));
-        assertEquals(new Float(33), RedisUtil.toObject("33".getBytes(), Float.class));
-        assertEquals("33", RedisUtil.toObject("33".getBytes(), String.class));
-        Bean obj = RedisUtil.toObject("{\"id\":23}".getBytes(), Bean.class);
+        assertEquals(new Integer(33), RedisUtil.toObject("33", Integer.class));
+        assertEquals(new Long(33), RedisUtil.toObject("33", Long.class));
+        assertEquals(new Double(33), RedisUtil.toObject("33", Double.class));
+        assertEquals(new Float(33), RedisUtil.toObject("33", Float.class));
+        assertEquals("33", RedisUtil.toObject("33", String.class));
+        Bean obj = RedisUtil.toObject("{\"id\":23}", Bean.class);
         assertNotNull(obj);
         assertEquals(23, obj.getId());
     }

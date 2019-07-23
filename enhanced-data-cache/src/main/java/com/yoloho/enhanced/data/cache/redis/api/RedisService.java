@@ -9,6 +9,9 @@ import java.util.Set;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import com.yoloho.enhanced.common.annotation.NonNull;
+import com.yoloho.enhanced.common.annotation.Nullable;
+
 public interface RedisService {
     
     /**
@@ -16,7 +19,17 @@ public interface RedisService {
      * @param key
      * @return null for not existed
      */
-    String get(final String key);
+    @Nullable
+    String get(String key);
+    
+    /**
+    *
+    * @param key
+    * @param clz
+    * @return null for not existed or malformed for specified type
+    */
+    @Nullable
+    <T> T get(String key, Class<T> clz);
 
     /**
      * Multi get
@@ -24,7 +37,18 @@ public interface RedisService {
      * @param keys
      * @return
      */
-    List<String> mget(final Collection<String> keys);
+    @NonNull
+    List<String> mget(Collection<String> keys);
+    
+    /**
+     * Multi get
+     *
+     * @param keys
+     * @param clz
+     * @return
+     */
+    @NonNull
+    <T> List<T> mget(Collection<String> keys, Class<T> clz);
     
     /**
      * Default value to 0.<br>
@@ -54,7 +78,7 @@ public interface RedisService {
      * @param value Any type will be convert into string (json format for objects) 
      * @return
      */
-    <T> void set(final String key, final T value);
+    <T> void set(String key, T value);
 
     /**
      * @param key
@@ -73,6 +97,38 @@ public interface RedisService {
      * @return true for success, false for existed key
      */
     <T> boolean setIfAbsent(String key, T value, int expireInSeconds);
+    
+    /**
+     * Set a bit in bitmap
+     * <p>
+     * Default ttl is 30 minutes
+     * 
+     * @param key
+     * @param offset
+     * @param value
+     * @return
+     */
+    boolean setBit(String key, long offset, boolean value);
+    
+    /**
+     * Set a bit in bitmap
+     * 
+     * @param key
+     * @param offset
+     * @param value
+     * @param expireInSeconds
+     * @return
+     */
+    boolean setBit(String key, long offset, boolean value, int expireInSeconds);
+
+    /**
+     * Get the bit from bitmap
+     * 
+     * @param key
+     * @param offset
+     * @return
+     */
+    public boolean getBit(String key, long offset);
     
     /**
      * Multi set
@@ -140,7 +196,20 @@ public interface RedisService {
      * @param end
      * @return
      */
+    @NonNull
     List<String> listRange(String key, int start, int end);
+    
+    /**
+     * Pop specified range of objects from list
+     * 
+     * @param key
+     * @param start
+     * @param end
+     * @param clz
+     * @return
+     */
+    @NonNull
+    <T> List<T> listRange(String key, int start, int end, Class<T> clz);
 
     /**
      * Pop an object from list
@@ -148,7 +217,18 @@ public interface RedisService {
      * @param key
      * @return null for empty list
      */
+    @Nullable
     String listPop(String key);
+    
+    /**
+     * Pop an object from list
+     * 
+     * @param key
+     * @param clz
+     * @return null for empty list or malformed for specified type
+     */
+    @Nullable
+    <T> T listPop(String key, Class<T> clz);
 
     /**
      * Push an object into list
@@ -158,38 +238,6 @@ public interface RedisService {
      */
     <T> void listPush(String key, T value);
 
-    /**
-     * Set a bit in bitmap
-     * <p>
-     * Default ttl is 30 minutes
-     * 
-     * @param key
-     * @param offset
-     * @param value
-     * @return
-     */
-    boolean setBit(String key, long offset, boolean value);
-    
-    /**
-     * Set a bit in bitmap
-     * 
-     * @param key
-     * @param offset
-     * @param value
-     * @param expireInSeconds
-     * @return
-     */
-    boolean setBit(String key, long offset, boolean value, int expireInSeconds);
-
-    /**
-     * Get the bit from bitmap
-     * 
-     * @param key
-     * @param offset
-     * @return
-     */
-    public boolean getBit(String key, long offset);
-    
     /**
      * Add a batch
      *
@@ -231,7 +279,21 @@ public interface RedisService {
      * @param count
      * @return
      */
+    @NonNull
     List<Pair<String, Double>> sortedSetScan(String key, long count);
+    
+    /**
+     * Walk the sorted set one way.
+     * <p>
+     * For elegantly walking please refer to {@link RedisTemplate}.
+     * 
+     * @param key
+     * @param count
+     * @param clz
+     * @return
+     */
+    @NonNull
+    <T> List<Pair<T, Double>> sortedSetScan(String key, long count, Class<T> clz);
 
     /**
      * Get the items in the range of index
@@ -241,7 +303,20 @@ public interface RedisService {
      * @param indexTo
      * @return
      */
+    @NonNull
     Set<String> sortedSetRange(String key, int indexFrom, int indexTo);
+    
+    /**
+     * Get the items in the range of index
+     * 
+     * @param key
+     * @param indexFrom
+     * @param indexTo
+     * @param clz
+     * @return
+     */
+    @NonNull
+    <T> Set<T> sortedSetRange(String key, int indexFrom, int indexTo, Class<T> clz);
 
     /**
      * Get the items in the range of index, order by desc (score)
@@ -251,7 +326,20 @@ public interface RedisService {
      * @param end
      * @return
      */
+    @NonNull
     Set<String> sortedSetRangeReverse(String key, long start, long end);
+    
+    /**
+     * Get the items in the range of index, order by desc (score)
+     * 
+     * @param key
+     * @param start
+     * @param end
+     * @param clz
+     * @return
+     */
+    @NonNull
+    <T> Set<T> sortedSetRangeReverse(String key, long start, long end, Class<T> clz);
 
     /**
      * Clear the sorted set
@@ -308,7 +396,19 @@ public interface RedisService {
      * @param hashKey
      * @return
      */
+    @Nullable
     String hashGet(String key, String hashKey);
+    
+    /**
+     * Fetch a value of specified field of the hash
+     * 
+     * @param key
+     * @param hashKey
+     * @param clz
+     * @return
+     */
+    @Nullable
+    <T> T hashGet(String key, String hashKey, Class<T> clz);
 
     /**
      * Fetch multiple values
@@ -317,7 +417,19 @@ public interface RedisService {
      * @param hashKeys
      * @return
      */
+    @NonNull
     List<String> hashMultiGet(String key, Collection<String> hashKeys);
+    
+    /**
+     * Fetch multiple values
+     * 
+     * @param key
+     * @param hashKeys
+     * @param clz
+     * @return
+     */
+    @NonNull
+    <T> List<T> hashMultiGet(String key, Collection<String> hashKeys, Class<T> clz);
 
     /**
      * Dump the hash
@@ -325,13 +437,33 @@ public interface RedisService {
      * @param key
      * @return
      */
+    @NonNull
     Map<String, String> hashGetAll(String key);
+    
+    /**
+     * Dump the hash
+     * 
+     * @param key
+     * @param clz
+     * @return
+     */
+    @NonNull
+    <T> Map<String, T> hashGetAll(String key, Class<T> clz);
 
     /**
      * @param key
      * @return
      */
+    @NonNull
     Set<String> hashKeys(String key);
+    
+    /**
+     * @param key
+     * @param clz
+     * @return
+     */
+    @NonNull
+    <T> Set<T> hashKeys(String key, Class<T> clz);
     
     /**
      * Get all the values in the hash
@@ -339,7 +471,17 @@ public interface RedisService {
      * @param key
      * @return
      */
-    List<String> hashValues(final String key);
+    @NonNull
+    List<String> hashValues(String key);
+    
+    /**
+     * Get all the values in the hash
+     * 
+     * @param key
+     * @param clz
+     * @return
+     */
+    <T> List<T> hashValues(String key, Class<T> clz);
     
     /**
      * 
@@ -347,7 +489,7 @@ public interface RedisService {
      * @param hashKey
      * @return
      */
-    boolean hashExists(final String key, final String hashKey);
+    boolean hashExists(String key, String hashKey);
     
     /**
      * Delete item(s) from hash
@@ -356,7 +498,7 @@ public interface RedisService {
      * @param hashKeys
      * @return
      */
-    long hashRemove(final String key, final String... hashKeys);
+    long hashRemove(String key, String... hashKeys);
     
     /**
      * Put a value into hash
@@ -391,7 +533,7 @@ public interface RedisService {
      * @param key
      * @param map
      */
-    void hashPutAll(final String key, final Map<String, String> map);
+    void hashPutAll(String key, Map<String, String> map);
 
     /**
      * Default value to 0.<br>
