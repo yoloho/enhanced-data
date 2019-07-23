@@ -118,6 +118,8 @@ public class RedisServiceTest {
         assertEquals("false", redisService.hashGet(key, "a"));
         redisService.hashPut(key, "a", "1");
         assertEquals("1", redisService.hashGet(key, "a"));
+        redisService.hashPutIfAbsent(key, "a", "2");
+        assertEquals("1", redisService.hashGet(key, "a"));
         
         List<String> list = redisService.hashMultiGet(key, Arrays.asList("a"));
         assertNotNull(list);
