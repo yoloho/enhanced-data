@@ -94,7 +94,7 @@ public class DistributedLock<T> {
             
             @Override
             public void keep(String key, int keepInSeconds) {
-                redisService.expire(key, (long) keepInSeconds);
+                redisService.expire(key, keepInSeconds);
             }
             
             @Override

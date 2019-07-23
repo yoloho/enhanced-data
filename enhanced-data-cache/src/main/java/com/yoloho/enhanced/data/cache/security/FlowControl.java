@@ -34,7 +34,7 @@ public class FlowControl {
      * @param redisService
      * @return
      */
-    public static long total(String key, long expire, RedisService redisService) {
+    public static long total(String key, int expire, RedisService redisService) {
         return total(key, 1L, expire, redisService);
     }
     
@@ -47,8 +47,8 @@ public class FlowControl {
      * @param redisService
      * @return
      */
-    public static long total(String key, long num, long expire, RedisService redisService) {
-        return redisService.getAndInc(getKey(key), 0L, num, expire);
+    public static long total(String key, long num, int expire, RedisService redisService) {
+        return redisService.increaseAndGet(getKey(key), num, expire); ////////
     }
     
     /**
@@ -75,7 +75,7 @@ public class FlowControl {
      * @return
      */
     public static long day(String key, RedisService redisService) {
-        return total(getTimeRelatedKey(key, 86400), 4000L, redisService);
+        return total(getTimeRelatedKey(key, 86400), 4000, redisService);
     }
     
     /**

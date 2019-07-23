@@ -2,9 +2,7 @@ package com.yoloho.enhanced.data.cache.lock;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,13 +21,13 @@ public class DistributedLockTest {
         RedisService redisService = Mockito.mock(RedisService.class);
         DistributedLock<Long> lock = new DistributedLock<>(redisService, "test1", 10);
         when(redisService.exists(lock.lockKey(1L))).thenReturn(false);
-        when(redisService.setIfAbsent(eq(lock.lockKey(1L)), anyString(), anyLong())).thenReturn(true);
+        when(redisService.setIfAbsent(eq(lock.lockKey(1L)), anyString(), anyInt())).thenReturn(true);
         assertTrue(lock.tryToLock(1L));
-        when(redisService.setIfAbsent(eq(lock.lockKey(1L)), anyString(), anyLong())).thenReturn(false);
+        when(redisService.setIfAbsent(eq(lock.lockKey(1L)), anyString(), anyInt())).thenReturn(false);
         assertFalse(lock.tryToLock(1L));
         when(redisService.exists(lock.lockKey(1L))).thenReturn(true);
         when(redisService.get(eq(lock.lockKey(1L)))).thenReturn("test|" + System.currentTimeMillis());
-        when(redisService.setIfAbsent(eq(lock.lockKey(1L)), anyString(), anyLong())).thenReturn(true);
+        when(redisService.setIfAbsent(eq(lock.lockKey(1L)), anyString(), anyInt())).thenReturn(true);
         assertFalse(lock.tryToLock(1L));
         try {
             lock.lock(1L, 10, TimeUnit.MILLISECONDS);

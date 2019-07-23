@@ -6,71 +6,163 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.yoloho.enhanced.data.cache.redis.support.SaveRedisBean;
-import com.yoloho.enhanced.data.cache.redis.support.ZItem;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.data.redis.core.RedisTemplate;
 
 public interface RedisService {
-
-    /**
-     * 保存对象
-     *
-     * @param key
-     * @param value
-     * @return
-     */
-    boolean set(final String key, final Object value);
-
-    /**
-     * 保存字符串
-     *
-     * @param key
-     * @param value
-     * @return
-     */
-    boolean set(final String key, final String value);
-
-    /**
-     * 保存一个字符串一定时间
-     *
-     * @param key
-     * @param value
-     * @param saveTime 过期时间 单位为秒
-     * @return
-     */
-    boolean set(final String key, final String value, final long saveTime);
-
-    /**
-     * 保存一个对象一定时间
-     *
-     * @param key
-     * @param value
-     * @param saveTime 过期时间 单位为秒
-     * @return
-     */
-    boolean set(final String key, final Object value, final long saveTime);
     
     /**
-     * 当key不存在时设置一个值，并设置过期
      *
      * @param key
-     * @param value
-     * @param saveTime 过期时间
-     *                 单位为秒
-     * @return true为设置成功
+     * @return null for not existed
      */
-    boolean setIfAbsent(String key, String value, long saveTime);
-    
+    String get(final String key);
+
     /**
-     * 当key不存在时设置一个值，并设置过期[采用序列化方式]
-     * @param key
-     * @param value
-     * @param expireTime
+     * Multi get
+     *
+     * @param keys
      * @return
      */
-    public boolean setNX(String key, String value, long expireTime);
+    List<String> mget(final Collection<String> keys);
     
     /**
-     * bitmap位设置
+     * Default value to 0.<br>
+     * Default step to 1.
+     * <p>
+     * TTL default to be 24 hours
+     * 
+     * @param key
+     * @return
+     */
+    long increaseAndGet(String key);
+    
+    /**
+     * Default value to 0
+     * 
+     * @param key
+     * @param step
+     * @param expireInSeconds 0 for no modification for TTL
+     * @return
+     */
+    long increaseAndGet(String key, long step, int expireInSeconds);
+
+    /**
+     * TTL = -1 (Will not be expired)
+     * 
+     * @param key
+     * @param value Any type will be convert into string (json format for objects) 
+     * @return
+     */
+    <T> void set(final String key, final T value);
+
+    /**
+     * @param key
+     * @param value Any type will be convert into string (json format for objects)
+     * @param expireInSeconds -1 for no expiration
+     * @return
+     */
+    <T> void set(String key, T value, int expireInSeconds);
+    
+    /**
+     * Set the key with the value when key is not existed
+     *
+     * @param key
+     * @param value Any type will be convert into string (json format for objects)
+     * @param expireInSeconds
+     * @return true for success, false for existed key
+     */
+    <T> boolean setIfAbsent(String key, T value, int expireInSeconds);
+    
+    /**
+     * Multi set
+     * 
+     * @param map
+     */
+    void setMulti(Map<String, Object> map);
+    
+    /**
+     * Set expire for a key
+     *
+     * @param key
+     * @param expireInSeconds
+     * @return
+     */
+    void expire(String key, int expireInSeconds);
+    
+    /**
+     * @param key
+     * @return
+     */
+    boolean exists(String key);
+    
+    /**
+     * Publish
+     * 
+     * @param channel
+     * @param msg
+     */
+    <T> void publish(String channel, T msg);
+    
+    /**
+     *
+     * @param key
+     */
+    void delete(String key);
+
+    /**
+     * @param keys
+     */
+    void delete(Collection<String> keys);
+    
+    /**
+     * Get the list's size
+     * 
+     * @param key
+     * @return
+     */
+    long listSize(String key);
+    
+    /**
+     * Trim the list to the range
+     * 
+     * @param key
+     * @param start
+     * @param end
+     */
+    void listTrim(String key, int start, int end);
+
+    /**
+     * Pop specified range of objects from list
+     * 
+     * @param key
+     * @param start
+     * @param end
+     * @return
+     */
+    List<String> listRange(String key, int start, int end);
+
+    /**
+     * Pop an object from list
+     * 
+     * @param key
+     * @return null for empty list
+     */
+    String listPop(String key);
+
+    /**
+     * Push an object into list
+     * 
+     * @param key
+     * @param value
+     */
+    <T> void listPush(String key, T value);
+
+    /**
+     * Set a bit in bitmap
+     * <p>
+     * Default ttl is 30 minutes
+     * 
      * @param key
      * @param offset
      * @param value
@@ -79,25 +171,19 @@ public interface RedisService {
     boolean setBit(String key, long offset, boolean value);
     
     /**
-     * bitmap位设置
+     * Set a bit in bitmap
+     * 
      * @param key
      * @param offset
      * @param value
-     * @param expired	单位：秒
+     * @param expireInSeconds
      * @return
      */
-    boolean setBit(String key, long offset, boolean value, long expired);
+    boolean setBit(String key, long offset, boolean value, int expireInSeconds);
 
     /**
-     * 批量保存
-     *
-     * @param list
-     * @return
-     */
-    boolean set(final List<SaveRedisBean> list);
-
-    /**
-     * bitmap位查询
+     * Get the bit from bitmap
+     * 
      * @param key
      * @param offset
      * @return
@@ -105,340 +191,217 @@ public interface RedisService {
     public boolean getBit(String key, long offset);
     
     /**
-     * 从redis中查询对象
+     * Add a batch
      *
      * @param key
-     * @param clazz
-     * @return
+     * @param itemMap item -> score
      */
-    <T> T get(final String key, final Class<T> clazz);
-
-    /**
-     * 从redis中查询对象
-     *
-     * @param keys
-     * @param clazz
-     * @return
-     */
-    <T> List<T> mget(final List<String> keys, final Class<T> clazz);
-
-    /**
-     * 从redis中查询出字符串
-     *
-     * @param key
-     * @return
-     */
-    String get(final String key);
-
-    /**
-     * 从redis中查询出字符串
-     *
-     * @param keys
-     * @return
-     */
-    List<String> mget(final List<String> keys);
+    void sortedSetMultiAdd(String key, Map<String, Double> itemMap);
     
     /**
-     * 查询map所有keys
      * @param key
-     * @return
-     */
-    Set<String> hKeys(final String key);
-    
-    /**
-     * 查询所有包含的values
-     * @param key
-     * @return
-     */
-    List<String> hVals(final String key);
-    
-    /**
-     * 查询某key是否存在
-     * @param key
-     * @param field
-     * @return
-     */
-    boolean hExists(final String key, final String field);
-    
-    /**
-     * 删除某子项
-     * @param key
-     * @param field
-     * @return
-     */
-    long hDel(final String key, final String... fields);
-    
-    /**
-     * 保存hash对象
-     * @param key
-     * @param field
-     * @param value
-     */
-    void hset(String key, String field, String value, Long timeoutInSecond);
-    /**
-     * 保存hash对象, 默认超时30分钟
-     * @param key
-     * @param field
-     * @param value
-     */
-
-    void hset(final String key, final String field, final String value);
-    
-    /**
-     * 批量set
-     * @param key
-     * @param map
-     */
-    void hMSet(final String key, final Map<String, String> map);
-    void hMSet(final String key, final Map<String, String> map, final Long timeoutInSecond);
-
-    Map<Object, Object> hGetAll(String key);
-    
-    /**
-     * 根据key获取hash对象
-     * @param key
-     * @param field
-     */
-    String hget(String key, String field);
-    
-    List<Object> hmget(final String key, final Collection<? extends Object> fields);
-
-    Long hLen(final String key);
-    /**
-     * 删除
-     *
-     * @param key
-     */
-    void delete(String key);
-
-    /**
-     * 批量删除
-     *
-     * @param keys
-     */
-    void delete(List<String> keys);
-
-    /**
-     * 入队列
-     *
-     * @param key
-     * @param value
-     */
-    void inQueue(String key, Object value);
-
-    /**
-     * 入队列
-     *
-     * @param key
-     * @param value
-     */
-    void inQueue(String key, String value);
-
-    /**
-     * 出队列为一个字符串
-     *
-     * @param key
-     * @return
-     */
-    String outQueue(final String key);
-
-    List<String> outQueueRange(final String key, int start, int end);
-
-    void outQueueTrim(final String key, int start, int end);
-
-    /**
-     * 出队列为一个对象非阻塞
-     *
-     * @param key
-     * @param clazz
-     * @return
-     */
-    <T> T outQueueNoBlack(final String key, Class<T> clazz);
-
-    /**
-     * 获取key 支持正则
-     *
-     * @param patternKey
-     * @return
-     */
-    Set<String> keys(String patternKey);
-
-    /**
-     * 根据正则获取列表值
-     *
-     * @param patternKey
-     * @param clazz
-     * @return
-     */
-    <T> List<T> getValueListByPatternKey(final String patternKey,
-                                                final Class<T> clazz);
-
-    /**
-     * 获取队列长度
-     *
-     * @param key
-     * @return
-     */
-    long getQueueSize(final String key);
-
-    /**
-     * 批量增加到有序集合
-     *
-     * @param key       集合的名称
-     * @param valueMaps 数据集合， map的key为要使用数据, value为排序的字段
-     */
-    void zSetAdd(String key, Map<String, ? extends Number> valueMaps);
-    
-    /**
-     * 指定的值做分数操作
-     * @param key
-     * @param value
+     * @param item
      * @param delta
      */
-    void zSetInc(String key, String value, double delta);
+    void sortedSetIncreaseScore(String key, String item, double delta);
     
-    long zSetRank(String key, String value);
-
     /**
-     * 增加到有序集合
-     *
-     * @param key            集合的名称
-     * @param value          数据的值
-     * @param sortFieldValue 作为排序的字段值
-     */
-    void zSetAdd(String key, String value, Object sortFieldValue);
-    
-    List<ZItem> zScan(final String key, final long count);
-
-    /**
-     * 取得有序集合的数据
-     *
-     * @param key   集合的名称
-     * @param start 开始位置
-     * @param end   截止位置
+     * Get the item's rank
+     * 
+     * @param key
+     * @param item
      * @return
      */
-    Set<String> zSetRange(String key, long start, long end);
+    long sortedSetRank(String key, String item);
 
     /**
-     * 取得有序集合的数据,按照排序字段降序
-     *
-     * @param key   集合的名称
-     * @param start 开始位置
-     * @param end   截止位置
-     * @return
-     */
-    Set<String> zSetReverseRange(String key, long start, long end);
-
-    /**
-     * 清空有序集合
      *
      * @param key
+     * @param item
+     * @param score
      */
-    void zSetClear(String key);
-
+    void sortedSetAdd(String key, String item, double score);
+    
     /**
-     * 读取有序集合的size
-     *
+     * Walk the sorted set one way.
+     * <p>
+     * For elegantly walking please refer to {@link RedisTemplate}.
+     * 
      * @param key
+     * @param count
      * @return
      */
-    long zSetSize(String key);
+    List<Pair<String, Double>> sortedSetScan(String key, long count);
 
     /**
-     * 查询有序集合项的分数
-     * @param key 集合名
-     * @param value 项标识
-     * @return 分值
-     */
-    int zSetScore(String key, Object value);
-
-    /**
-     * 批量删除有序集合中的数据
+     * Get the items in the range of index
      *
-     * @param key    集合的名称
-     * @param values 数据集合
+     * @param key
+     * @param indexFrom
+     * @param indexTo
+     * @return
      */
-    void zSetRemove(String key, List<? extends Object> values);
+    Set<String> sortedSetRange(String key, int indexFrom, int indexTo);
 
     /**
-     * 根据score批量删除
+     * Get the items in the range of index, order by desc (score)
      *
      * @param key
      * @param start
      * @param end
-     */
-    long zSetRemoveByScore(String key, long start, long end);
-    long zSetRemoveByScore(String key, double start, double end);
-
-    /**
-     * 获取并增长key  如果没有设置默认值
-     * 超时时间默认 30分钟
-     * @param key
-     * @param defaultValue
      * @return
      */
-    Long getAndInc(String key, Long defaultValue);
-
-
-    /**
-     *取并增长key  如果没有设置默认值
-     * @param key
-     * @param defaultValue
-     * @param timeoutInSecond
-     * @return
-     */
-    Long getAndInc(final String key, final Long defaultValue, final Long step, final Long timeoutInSecond);
-    
-    /**
-     * 增长key并获取值， 如果没有设置默认值
-     * @param key
-     * @param defaultValue
-     * @param step
-     * @param expireSeconds
-     * @return
-     */
-    Long incrAndGet(final String key, final long defaultValue, final long step, final long expireSeconds);
+    Set<String> sortedSetRangeReverse(String key, long start, long end);
 
     /**
-     * hash获取并增长key，步长1, 默认超时30分钟
-     * @param hashKey
-     * @param key
-     * @param defaultValue
-     * @return
-     */
-    Long hGetAndInc(final String hashKey, final String key, final Long defaultValue);
-
-    /**
-     * hash获取并增长key, 步长1
-     * @param hashKey
-     * @param key
-     * @param defaultValue
-     * @param timeoutInSecond
-     * @return
-     */
-    Long hGetAndInc(final String hashKey, final String key, final Long defaultValue, final Long step, final Long timeoutInSecond);
-
-    /**
-     * 设置key的过期时间
+     * Clear the sorted set
      *
-     * @param key  redisKey
-     * @param timeout 保存时间秒
+     * @param key
+     */
+    void sortedSetClear(String key);
+
+    /**
+     * Get the size of sorted set
+     *
+     * @param key
      * @return
      */
-    void expire(String key, Long timeout);
+    long sortedSetSize(String key);
+
+    /**
+     * Get the item's score
+     * 
+     * @param key
+     * @param item
+     * @return score
+     */
+    double sortedSetScore(String key, String item);
+
+    /**
+     *
+     * @param key
+     * @param items
+     */
+    void sortedSetRemove(String key, String... items);
+
+    /**
+     * Remove the items according the range of score
+     *
+     * @param key
+     * @param scoreFrom
+     * @param scoreTo
+     */
+    long sortedSetRemoveByScore(String key, double scoreFrom, double scoreTo);
     
     /**
-     * 确定一个Key是否存在
+     * Get a hash's size
+     * 
      * @param key
-     * @return 存在：true;否则false
+     * @return
      */
-    boolean exists(String key);
+    long hashSize(String key);
+
+    /**
+     * Fetch a value of specified field of the hash
+     * 
+     * @param key
+     * @param hashKey
+     * @return
+     */
+    String hashGet(String key, String hashKey);
+
+    /**
+     * Fetch multiple values
+     * 
+     * @param key
+     * @param hashKeys
+     * @return
+     */
+    List<String> hashMultiGet(String key, Collection<String> hashKeys);
+
+    /**
+     * Dump the hash
+     * 
+     * @param key
+     * @return
+     */
+    Map<String, String> hashGetAll(String key);
+
+    /**
+     * @param key
+     * @return
+     */
+    Set<String> hashKeys(String key);
+    
+    /**
+     * Get all the values in the hash
+     * 
+     * @param key
+     * @return
+     */
+    List<String> hashValues(final String key);
     
     /**
      * 
-     * @param channel
-     * @param msg
+     * @param key
+     * @param hashKey
+     * @return
      */
-    void publish(final String channel, String msg);
+    boolean hashExists(final String key, final String hashKey);
+    
+    /**
+     * Delete item(s) from hash
+     * 
+     * @param key
+     * @param hashKeys
+     * @return
+     */
+    long hashRemove(final String key, final String... hashKeys);
+    
+    /**
+     * Put a value into hash
+     * <p>
+     * Putting value into hash will not change its ttl.
+     * So if you want to renew the ttl you should do it separately.
+     * 
+     * @param key
+     * @param hashKey
+     * @param value It always be taken as string
+     */
+    <T> void hashPut(String key, String hashKey, T value);
+    
+    /**
+     * Put values into hash.
+     * <p>
+     * Putting value into hash will not change its ttl.
+     * So if you want to renew the ttl you should do it separately.
+     * 
+     * @param key
+     * @param map
+     */
+    void hashPutAll(final String key, final Map<String, String> map);
+
+    /**
+     * Default value to 0.<br>
+     * Default step to 1.
+     * <p>
+     * TTL default to be 24 hours
+     * 
+     * @param key
+     * @param hashKey
+     * @return
+     */
+    long hashIncreaseAndGet(String key, String hashKey);
+
+    /**
+     * Default value to 0
+     * 
+     * @param key
+     * @param hashKey
+     * @param step
+     * @param expireInSeconds expireInSeconds 0 for no modification for TTL
+     * @return
+     */
+    long hashIncreaseAndGet(String key, String hashKey, long step, int expireInSeconds);
+
 }
