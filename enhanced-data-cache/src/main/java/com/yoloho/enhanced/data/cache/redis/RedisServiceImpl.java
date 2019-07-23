@@ -413,6 +413,14 @@ public class RedisServiceImpl implements RedisService {
     }
     
     @Override
+    public <T> void hashPutIfAbsent(String key, String hashKey, T value) {
+        Preconditions.checkNotNull(key, "Key should not be null");
+        Preconditions.checkNotNull(hashKey, "HashKey should not be null");
+        Preconditions.checkNotNull(value, "Value should not be null");
+        redisTemplate.opsForHash().putIfAbsent(key, hashKey, RedisUtil.toString(value));
+    }
+    
+    @Override
     public void hashPutAll(String key, Map<String, String> map) {
         Preconditions.checkNotNull(key, "Key should not be null");
         Preconditions.checkNotNull(map, "ValueMap should not be null");

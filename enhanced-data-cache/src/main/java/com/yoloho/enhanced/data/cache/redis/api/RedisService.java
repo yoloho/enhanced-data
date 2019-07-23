@@ -371,6 +371,18 @@ public interface RedisService {
     <T> void hashPut(String key, String hashKey, T value);
     
     /**
+     * Put a value into hash if absent
+     * <p>
+     * Putting value into hash will not change its ttl.
+     * So if you want to renew the ttl you should do it separately.
+     * 
+     * @param key
+     * @param hashKey
+     * @param value
+     */
+    <T> void hashPutIfAbsent(String key, String hashKey, T value);
+    
+    /**
      * Put values into hash.
      * <p>
      * Putting value into hash will not change its ttl.
