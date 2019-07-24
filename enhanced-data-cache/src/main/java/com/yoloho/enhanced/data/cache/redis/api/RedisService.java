@@ -558,4 +558,75 @@ public interface RedisService {
      */
     long hashIncreaseAndGet(String key, String hashKey, long step, int expireInSeconds);
 
+    //////////////////////////////////////
+    
+    /**
+     * Add an item into a set (unsorted)
+     * 
+     * @param key
+     * @param item
+     * @return number of new items inserted
+     */
+    <T> long unsortedSetAdd(String key, T item);
+    
+    /**
+     * Add items into a set (unsorted)
+     * 
+     * @param key
+     * @param items
+     * @return number of new items inserted
+     */
+    <T> long unsortedSetAdd(String key, Collection<T> items);
+
+    /**
+     * Get the size of set
+     * 
+     * @param key
+     * @return
+     */
+    long unsortedSetSize(String key);
+
+    /**
+     * Get all members in set
+     * 
+     * @param key
+     * @return
+     */
+    Set<String> unsortedSetGetAll(String key);
+
+    /**
+     * Get all members.<br>
+     * Fail to parse or null values are ignored.
+     * 
+     * @param key
+     * @param clz
+     * @return
+     */
+    <T> Set<T> unsortedSetGetAll(String key, Class<T> clz);
+
+    /**
+     * @param key
+     * @param item
+     * @return
+     */
+    <T> boolean unsortedSetExists(String key, T item);
+
+    /**
+     * Remove single item
+     * 
+     * @param key
+     * @param item
+     * @return number of items removed
+     */
+    <T> long unsortedSetRemove(String key, T item);
+
+    /**
+     * Remove multiple items
+     * 
+     * @param key
+     * @param items
+     * @return number of items removed
+     */
+    <T> long unsortedSetRemove(String key, Collection<T> items);
+
 }

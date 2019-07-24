@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
@@ -200,6 +201,45 @@ public class RedisServiceTest {
         assertNotNull(list1);
         assertEquals(2, list1.size());
         assertNull(list1.get(0).getLeft());
+        
+        redisService.delete(key);
+    }
+    
+    @Test
+    public void setTest() {
+        String key = "test_ut_set";
+        redisService.delete(key);
+        
+        assertEquals(1, redisService.unsortedSetAdd(key, "a"));
+        assertEquals(1, redisService.unsortedSetAdd(key, "b"));
+        assertEquals(0, redisService.unsortedSetAdd(key, "b"));
+        assertEquals(3, redisService.unsortedSetAdd(key, Arrays.asList("a", "b", "c", "d", "1")));
+        
+        assertEquals(5, redisService.unsortedSetSize(key));
+        
+        Set<String> values = redisService.unsortedSetGetAll(key);
+        assertNotNull(values);
+        assertEquals(5, values.size());
+        assertTrue(values.contains("a"));
+        assertTrue(values.contains("1"));
+        
+        Set<Integer> values1 = redisService.unsortedSetGetAll(key, Integer.class);
+        assertNotNull(values1);
+        assertEquals(1, values1.size());
+        assertTrue(values1.contains(1));
+        
+        assertTrue(redisService.unsortedSetExists(key, "a"));
+        assertTrue(redisService.unsortedSetExists(key, "d"));
+        assertFalse(redisService.unsortedSetExists(key, "e"));
+        
+        assertEquals(0, redisService.unsortedSetRemove(key, "f"));
+        assertEquals(5, redisService.unsortedSetSize(key));
+        assertEquals(1, redisService.unsortedSetRemove(key, "d"));
+        assertEquals(4, redisService.unsortedSetSize(key));
+        assertEquals(1, redisService.unsortedSetRemove(key, 1));
+        assertEquals(3, redisService.unsortedSetSize(key));
+        assertEquals(2, redisService.unsortedSetRemove(key, Arrays.asList("a", "b")));
+        assertEquals(1, redisService.unsortedSetSize(key));
         
         redisService.delete(key);
     }

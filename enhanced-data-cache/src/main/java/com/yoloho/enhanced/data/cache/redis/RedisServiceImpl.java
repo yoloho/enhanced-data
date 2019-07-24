@@ -262,6 +262,7 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public List<String> listRange(String key, int start, int end) {
+        Preconditions.checkNotNull(key, "Key should not be null");
         List<String> list = redisTemplate.opsForList().range(key, start, end);
         if (list == null || list.isEmpty()) {
             return Collections.emptyList();
@@ -278,7 +279,91 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public void listTrim(String key, int start, int end) {
+        Preconditions.checkNotNull(key, "Key should not be null");
         redisTemplate.opsForList().trim(key, start, end);
+    }
+    
+    /////////////////// Set /////////////////////////////
+    @Override
+    public <T> long unsortedSetAdd(String key, T item) {
+        Preconditions.checkNotNull(key, "Key should not be null");
+        Preconditions.checkNotNull(item, "Value should not be null");
+        Long size = redisTemplate.opsForSet().add(key, RedisUtil.toString(item));
+        if (size == null) {
+            return 0;
+        }
+        return size;
+    }
+    
+    @Override
+    public <T> long unsortedSetAdd(String key, Collection<T> items) {
+        Preconditions.checkNotNull(key, "Key should not be null");
+        Preconditions.checkNotNull(items, "Value should not be null");
+        Long size = redisTemplate.opsForSet().add(key, items.stream()
+                .map(RedisUtil::toString)
+                .collect(Collectors.toList())
+                .toArray(new String[0]));
+        if (size == null) {
+            return 0;
+        }
+        return size;
+    }
+    
+    @Override
+    public long unsortedSetSize(String key) {
+        Preconditions.checkNotNull(key, "Key should not be null");
+        return redisTemplate.opsForSet().size(key);
+    }
+    
+    @Override
+    public Set<String> unsortedSetGetAll(String key) {
+        Preconditions.checkNotNull(key, "Key should not be null");
+        return redisTemplate.opsForSet().members(key);
+    }
+    
+    @Override
+    public <T> Set<T> unsortedSetGetAll(String key, Class<T> clz) {
+        Preconditions.checkNotNull(key, "Key should not be null");
+        Set<String> result = redisTemplate.opsForSet().members(key);
+        if (result == null || result.isEmpty()) {
+            return Collections.emptySet();
+        }
+        return result.stream()
+                .map(str -> RedisUtil.toObject(str, clz))
+                .filter(item -> item != null)
+                .collect(Collectors.toSet());
+    }
+    
+    @Override
+    public <T> boolean unsortedSetExists(String key, T item) {
+        Preconditions.checkNotNull(key, "Key should not be null");
+        Preconditions.checkNotNull(item, "Value should not be null");
+        return redisTemplate.opsForSet().isMember(key, RedisUtil.toString(item));
+    }
+    
+    @Override
+    public <T> long unsortedSetRemove(String key, T item) {
+        Preconditions.checkNotNull(key, "Key should not be null");
+        Preconditions.checkNotNull(item, "Value should not be null");
+        Long size = redisTemplate.opsForSet().remove(key, RedisUtil.toString(item));
+        if (size == null) {
+            return 0;
+        }
+        return size;
+    }
+    
+    @Override
+    public <T> long unsortedSetRemove(String key, Collection<T> items) {
+        Preconditions.checkNotNull(key, "Key should not be null");
+        Preconditions.checkNotNull(items, "Value should not be null");
+        Long size = redisTemplate.opsForSet().remove(key, items.stream()
+                .map(RedisUtil::toString)
+                .collect(Collectors.toList())
+                .toArray());
+        if (size == null) {
+            return 0;
+        }
+        return size;
     }
     
     /////////////////// Sorted Set //////////////////////
