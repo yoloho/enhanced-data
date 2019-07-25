@@ -2,7 +2,9 @@ package com.yoloho.enhanced.data.cache.lock;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.yoloho.enhanced.data.cache.lock.DistributedLock;
 import com.yoloho.enhanced.data.cache.redis.api.RedisService;
 
 public class DistributedLockTest {
@@ -70,6 +71,7 @@ public class DistributedLockTest {
         assertTrue(lock.tryToLock(1L));
         assertFalse(lock.tryToLock(1L));
         assertTrue(lock.tryToLock(2L));
+        assertTrue(lock.unlock(2L));
         try {
             lock.lock(1L, 10, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
@@ -77,5 +79,15 @@ public class DistributedLockTest {
         }
         assertTrue(lock.unlock(1L));
         assertTrue(lock.tryToLock(1L));
+        assertTrue(lock.unlock(1L));
+        
+        try (AutoCloseable obj = lock.lock(2L, 2, TimeUnit.SECONDS)) {
+        } catch (Exception e) {
+            assertTrue(false);
+        }
+        try (AutoCloseable obj = lock.lock(2L, 2, TimeUnit.SECONDS)) {
+        } catch (Exception e) {
+            assertTrue(false);
+        }
     }
 }

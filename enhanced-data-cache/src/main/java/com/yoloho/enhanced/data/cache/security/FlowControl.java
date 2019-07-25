@@ -48,7 +48,11 @@ public class FlowControl {
      * @return
      */
     public static long total(String key, long num, int expire, RedisService redisService) {
-        return redisService.increaseAndGet(getKey(key), num, expire); ////////
+        long result = redisService.increaseAndGet(getKey(key), num);
+        if (expire > 0) {
+            redisService.expire(key, expire);
+        }
+        return result;
     }
     
     /**

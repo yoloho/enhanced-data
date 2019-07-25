@@ -53,8 +53,6 @@ public interface RedisService {
     /**
      * Default value to 0.<br>
      * Default step to 1.
-     * <p>
-     * TTL default to be 24 hours
      * 
      * @param key
      * @return
@@ -66,10 +64,9 @@ public interface RedisService {
      * 
      * @param key
      * @param step
-     * @param expireInSeconds 0 for no modification for TTL
      * @return
      */
-    long increaseAndGet(String key, long step, int expireInSeconds);
+    long increaseAndGet(String key, long step);
 
     /**
      * TTL = -1 (Will not be expired)
@@ -93,6 +90,15 @@ public interface RedisService {
      *
      * @param key
      * @param value Any type will be convert into string (json format for objects)
+     * @return true for success, false for existed key
+     */
+    <T> boolean setIfAbsent(String key, T value);
+    
+    /**
+     * Set the key with the value when key is not existed
+     *
+     * @param key
+     * @param value Any type will be convert into string (json format for objects)
      * @param expireInSeconds
      * @return true for success, false for existed key
      */
@@ -110,17 +116,6 @@ public interface RedisService {
      */
     boolean setBit(String key, long offset, boolean value);
     
-    /**
-     * Set a bit in bitmap
-     * 
-     * @param key
-     * @param offset
-     * @param value
-     * @param expireInSeconds
-     * @return
-     */
-    boolean setBit(String key, long offset, boolean value, int expireInSeconds);
-
     /**
      * Get the bit from bitmap
      * 
@@ -533,7 +528,7 @@ public interface RedisService {
      * @param key
      * @param map
      */
-    void hashPutAll(String key, Map<String, String> map);
+    <T> void hashPutAll(String key, Map<String, T> map);
 
     /**
      * Default value to 0.<br>
@@ -553,10 +548,9 @@ public interface RedisService {
      * @param key
      * @param hashKey
      * @param step
-     * @param expireInSeconds expireInSeconds 0 for no modification for TTL
      * @return
      */
-    long hashIncreaseAndGet(String key, String hashKey, long step, int expireInSeconds);
+    long hashIncreaseAndGet(String key, String hashKey, long step);
 
     //////////////////////////////////////
     

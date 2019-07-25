@@ -1,5 +1,7 @@
 package com.yoloho.enhanced.data.cache.lock;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -8,9 +10,9 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
 import com.yoloho.enhanced.common.util.RandomUtil;
 import com.yoloho.enhanced.data.cache.redis.api.RedisService;
-import com.google.common.base.Preconditions;
 
 /**
  * 基于redis的一个分布式锁实现<br>
@@ -181,6 +183,7 @@ public class DistributedLock<T> {
                     logger.warn("lock key consistent error");
                 }
             }
+            lockSupport.delete(lockKey);
         }
         // try to lock
         String val = String.format("%s|%d", this.uuid, System.currentTimeMillis());
@@ -215,16 +218,22 @@ public class DistributedLock<T> {
      * @param key
      * @param waitTime
      * @param unit
+     * @return
      * @throws TimeoutException
      * @throws InterruptedException
      */
-    public void lock(T key, int waitTime, TimeUnit unit) throws TimeoutException, InterruptedException {
+    public Closeable lock(T key, int waitTime, TimeUnit unit) throws TimeoutException, InterruptedException {
         long millis = unit.toMillis(waitTime);
         while (true) {
             boolean locked = tryToLock(key);
             if (locked) {
                 //succ
-                return;
+                return new Closeable() {
+                    @Override
+                    public void close() throws IOException {
+                        unlock(key);
+                    }
+                };
             }
             TimeUnit.MILLISECONDS.sleep(10);
             millis -= 10;

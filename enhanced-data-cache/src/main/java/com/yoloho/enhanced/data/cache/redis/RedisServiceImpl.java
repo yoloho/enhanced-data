@@ -80,11 +80,11 @@ public class RedisServiceImpl implements RedisService {
     
     @Override
     public long increaseAndGet(String key) {
-        return increaseAndGet(key, 1, 86400);
+        return increaseAndGet(key, 1);
     }
     
     @Override
-    public long increaseAndGet(String key, long step, int expireInSecond) {
+    public long increaseAndGet(String key, long step) {
         try {
             return redisTemplate.execute(new RedisCallback<Long>() {
                 @Override
@@ -92,9 +92,6 @@ public class RedisServiceImpl implements RedisService {
                         throws DataAccessException {
                     byte[] serialKey = getRedisSerializer().serialize(key);
                     long result = connection.incrBy(serialKey, step);
-                    if (expireInSecond > 0) {
-                        connection.expire(serialKey, expireInSecond);
-                    }
                     return result;
                 }
             });
@@ -186,6 +183,11 @@ public class RedisServiceImpl implements RedisService {
     }
     
     @Override
+    public <T> boolean setIfAbsent(String key, T value) {
+        return setIfAbsent(key, value, 0);
+    }
+    
+    @Override
     public <T> boolean setIfAbsent(String key, T value, int expireInSeconds) {
         Preconditions.checkNotNull(key, "Key should not be null");
         Preconditions.checkNotNull(value, "Value should not be null");
@@ -198,39 +200,20 @@ public class RedisServiceImpl implements RedisService {
     
     @Override
     public boolean setBit(String key, long offset, boolean value) {
-        return setBit(key, offset, value, 30 * 60);
-    }
-    
-    @Override
-    public boolean setBit(String key, long offset, boolean value, int expireInSeconds) {
-        Preconditions.checkNotNull(key, "Key should not be null");
-        boolean result = redisTemplate.execute(new RedisCallback<Boolean>() {
-            public Boolean doInRedis(RedisConnection connection)
-                    throws DataAccessException {
-                byte[] serialKey = getRedisSerializer().serialize(key);
-                if(connection.setBit(serialKey, offset, value)) {
-                    if(expireInSeconds > 0) {
-                        connection.expire(serialKey, expireInSeconds);
-                    }
-                    return true;
-                }else {
-                    return false;
-                }
-            }
-        });
+        Boolean result = redisTemplate.opsForValue().setBit(key, offset, value);
+        if (result == null) {
+            return false;
+        }
         return result;
     }
     
     @Override
     public boolean getBit(String key, long offset) {
         Preconditions.checkNotNull(key, "Key should not be null");
-        boolean result = redisTemplate.execute(new RedisCallback<Boolean>() {
-            public Boolean doInRedis(RedisConnection connection)
-                    throws DataAccessException {
-                byte[] serialKey = getRedisSerializer().serialize(key);
-                return connection.getBit(serialKey, offset);
-            }
-        });
+        Boolean result = redisTemplate.opsForValue().getBit(key, offset);
+        if (result == null) {
+            return false;
+        }
         return result;
     }
     
@@ -500,14 +483,14 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public long hashIncreaseAndGet(String key, String hashKey) {
-        return hashIncreaseAndGet(key, hashKey, 1, 86400);
+        return hashIncreaseAndGet(key, hashKey, 1);
     }
 
     @Override
-    public long hashIncreaseAndGet(String key, String hashKey, long step, int expireInSeconds) {
-        long result = redisTemplate.opsForHash().increment(key, hashKey, step);
-        if (expireInSeconds > 0) {
-            redisTemplate.expire(hashKey, expireInSeconds, TimeUnit.SECONDS);
+    public long hashIncreaseAndGet(String key, String hashKey, long step) {
+        Long result = redisTemplate.opsForHash().increment(key, hashKey, step);
+        if (result == null) {
+            return 0;
         }
         return result;
     }
@@ -569,13 +552,17 @@ public class RedisServiceImpl implements RedisService {
     }
     
     @Override
-    public void hashPutAll(String key, Map<String, String> map) {
+    public <T> void hashPutAll(String key, Map<String, T> map) {
         Preconditions.checkNotNull(key, "Key should not be null");
         Preconditions.checkNotNull(map, "ValueMap should not be null");
         if (map.isEmpty()) {
             return;
         }
-        redisTemplate.opsForHash().putAll(key, map);
+        Map<String, String> newMap = new HashMap<>(map.size());
+        for (Entry<String, T> entry : map.entrySet()) {
+            newMap.put(entry.getKey(), RedisUtil.toString(entry.getValue()));
+        }
+        redisTemplate.opsForHash().putAll(key, newMap);
     }
     
     @Override

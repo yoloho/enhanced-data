@@ -87,9 +87,9 @@ public class RedisServiceTest {
         
         assertEquals(1, redisService.increaseAndGet(key));
         assertEquals(2, redisService.increaseAndGet(key));
-        assertEquals(4, redisService.increaseAndGet(key, 2, 3333));
+        assertEquals(4, redisService.increaseAndGet(key, 2));
         redisService.delete(key);
-        assertEquals(2, redisService.increaseAndGet(key, 2, 3333));
+        assertEquals(2, redisService.increaseAndGet(key, 2));
         redisService.delete(key);
     }
 
@@ -166,7 +166,7 @@ public class RedisServiceTest {
         assertTrue(redisService.hashExists(key, "a"));
         assertTrue(redisService.hashExists(key, "b"));
         assertEquals(3, redisService.hashIncreaseAndGet(key, "b"));
-        assertEquals(5, redisService.hashIncreaseAndGet(key, "b", 2, 0));
+        assertEquals(5, redisService.hashIncreaseAndGet(key, "b", 2));
         
         redisService.delete(key);
     }
