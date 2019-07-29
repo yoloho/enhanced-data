@@ -52,6 +52,19 @@ Implementation of sharding DAO.
 See the [documentation](enhanced-data-dao-sharding/README.md).
 
 # Change log
+## 1.1.1
+* Upgrade enhanced-parent to 1.0.3
+
+## 1.1.0
+Feature:
+* Documents work
+* Add operation for unsorted set in RedisService
+* Add generic interface into RedisService
+
+Fix:
+* Expiration logic in DistributedLock
+* Add unit test for interface RedisService
+
 ## 1.0.1
 * Restructure and redefine `RedisService`
 * Make `DistributedLock` up to date
