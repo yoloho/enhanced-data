@@ -51,10 +51,10 @@ public class EnhancedDaoImplTest {
         private int uid;
         private String content;
         private int size;
-        public int getId() {
+        public Integer getId() {
             return id;
         }
-        public void setId(int id) {
+        public void setId(Integer id) {
             this.id = id;
         }
         public int getUid() {
@@ -687,6 +687,10 @@ public class EnhancedDaoImplTest {
         daoSignature.setSqlSessionFactory(sqlSessionFactory);
         daoSignature.setTableName(UnitTestUserSignature.class);
         daoSignature.setBatchSize(3);
+        {
+            //清理
+            daoSignature.remove(new DynamicQueryFilter().equalPair("uid", 10).getQueryData());
+        }
         {
             UnitTestUserSignature bean = new UnitTestUserSignature();
             bean.setUid(10);
