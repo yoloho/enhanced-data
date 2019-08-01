@@ -221,4 +221,6 @@ By annotation we could use:
 )
 ```
 
+# Extended Article
+[Why We Need Monitoring Druid](docs/Why_We_Need_Monitoring_Druid.md)
 
