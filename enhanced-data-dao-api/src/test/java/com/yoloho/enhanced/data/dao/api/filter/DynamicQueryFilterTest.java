@@ -1,5 +1,7 @@
 package com.yoloho.enhanced.data.dao.api.filter;
 
+import static org.junit.Assert.assertEquals;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -158,6 +160,14 @@ public class DynamicQueryFilterTest {
         filter = new DynamicQueryFilter();
         filter.expr("length(@displayName@)", Operator.greatOrEqual, new ExprEntry("unix_timestam()", Demo.class));
         Assert.assertEquals("length(`display_name`) >= unix_timestam()", filter.getQueryData().getWhere());
+    }
+    
+    @Test
+    public void sortTest() {
+        DynamicQueryFilter filter = new DynamicQueryFilter();
+        filter.orderBy("a", true)
+              .orderBy("b", false);
+        assertEquals("order by a desc, b asc", filter.getQueryData().get("SortSQL"));
     }
 
 }

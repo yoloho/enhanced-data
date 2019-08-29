@@ -52,6 +52,9 @@ Implementation of sharding DAO.
 See the [documentation](enhanced-data-dao-sharding/README.md).
 
 # Change log
+## 1.1.2
+* Fix malformed assembling when using multiple `order by`
+
 ## 1.1.1
 * Upgrade enhanced-parent to 1.0.3
 

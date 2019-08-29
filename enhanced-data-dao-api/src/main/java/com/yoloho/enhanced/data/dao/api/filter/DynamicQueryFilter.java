@@ -446,6 +446,8 @@ public class DynamicQueryFilter implements java.io.Serializable {
             } else if (cmd instanceof SortCommandImpl) {
                 if (orderBy.length() > 0) {
                     orderBy.append(", ");
+                } else {
+                    orderBy.append("order by ");
                 }
                 orderBy.append(((SortCommandImpl)cmd).getPartSql());
             }
