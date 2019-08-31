@@ -112,6 +112,17 @@ public class DynamicQueryFilter implements java.io.Serializable {
         return addFilter(fieldName, Operator.equal, value);
     }
     
+    public <T> DynamicQueryFilter greaterThan(String fieldName, T value) {
+        return addFilter(fieldName, Operator.greatThan, value);
+    }
+    
+    /**
+     * @param fieldName
+     * @param value
+     * @return
+     * @deprecated due to typo, see
+     * {@link #greaterThan(String, Object)}
+     */
     public <T> DynamicQueryFilter greatThan(String fieldName, T value) {
         return addFilter(fieldName, Operator.greatThan, value);
     }
@@ -136,6 +147,17 @@ public class DynamicQueryFilter implements java.io.Serializable {
         return addFilter(fieldName, Operator.like, value);
     }
     
+    public <T> DynamicQueryFilter greaterOrEqual(String fieldName, T value) {
+        return addFilter(fieldName, Operator.greatOrEqual, value);
+    }
+    
+    /**
+     * @param fieldName
+     * @param value
+     * @return
+     * @deprecated due to typo, see
+     * {@link #greaterOrEqual(String, Object)}
+     */
     public <T> DynamicQueryFilter greatOrEqual(String fieldName, T value) {
         return addFilter(fieldName, Operator.greatOrEqual, value);
     }

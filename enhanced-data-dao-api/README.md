@@ -38,8 +38,8 @@ It represents the `=`.
 
 Same as:
 * notEqual `<>`
-* greatThan `>`
-* greatOrEqual `>=`
+* greaterThan `>`
+* greaterOrEqual `>=`
 * lessThan `<`
 * lessOrEqual `<=`
 * in `in (...)`
