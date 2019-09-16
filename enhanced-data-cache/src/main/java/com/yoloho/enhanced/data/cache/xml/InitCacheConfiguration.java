@@ -30,9 +30,9 @@ public class InitCacheConfiguration implements DeferredImportSelector {
                 logger.warn("no annotation configuration found, using defaults");
                 return;
             }
-            String namespace = (String)map.get("cacheNamespace");
-            String redisRef = (String)map.get("cacheRedisRef");
-            boolean useAspectJ = (Boolean)map.get("cacheUseAspectJ");
+            String namespace = (String)map.get("namespace");
+            String redisRef = (String)map.get("redisRef");
+            boolean useAspectJ = (Boolean)map.get("useAspectJ");
             InitCacheParser.initBeans(namespace, useAspectJ, redisRef, registry);
         }
     }
