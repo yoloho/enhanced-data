@@ -120,7 +120,7 @@ class CacheConfig {
                     cacheConfig.setExpireLocal(annotation.expireLocal());
                 }
                 if (annotation.maxSizeLocal() > 0) {
-                    cacheConfig.setExpireLocal(annotation.maxSizeLocal());
+                    cacheConfig.setMaxSizeLocal(annotation.maxSizeLocal());
                 }
                 if (annotation.remote() != EnableCacheBoolean.UNSET) {
                     cacheConfig.setRemote(annotation.remote() == EnableCacheBoolean.ENABLE);
