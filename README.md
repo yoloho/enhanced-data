@@ -52,6 +52,9 @@ Implementation of sharding DAO.
 See the [documentation](enhanced-data-dao-sharding/README.md).
 
 # Change log
+## 1.1.3
+* Fix `InitCache` initializing bug
+
 ## 1.1.2
 * Fix malformed assembling when using multiple `order by`
 
