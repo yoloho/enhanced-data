@@ -52,6 +52,9 @@ Implementation of sharding DAO.
 See the [documentation](enhanced-data-dao-sharding/README.md).
 
 # Change log
+## 1.1.5
+* Add `mapperLocations` to `EnableEnhancedDao` to support parsing custom mappers
+
 ## 1.1.4
 * Fix local cache ttl bug
 

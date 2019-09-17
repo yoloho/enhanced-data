@@ -49,4 +49,11 @@ public @interface EnableEnhancedDao {
      * @return
      */
     String postfix() default "EnhancedDao";
+    
+    /**
+     * Classpaths to scan other "mapper.xml"(mybatis)
+     * 
+     * @return
+     */
+    String[] mapperLocations() default {};
 }

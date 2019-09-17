@@ -16,11 +16,13 @@ public class EnhancedConfig {
     final static private String ATTR_POSTFIX = "postfix";
     final static private String ATTR_SCAN = "scan-path";
     final static private String ATTR_SQL_SESSION_FACTORY = "sql-session-factory";
+    final static private String ATTR_MAPPER_LOCATIONS = "mapper-locations";
     
     private List<String> scanPath = Collections.emptyList();
     private String sqlSessionFactory = "sqlSessionFactory";
     private String prefix = "";
     private String postfix = "EnhancedDao";
+    private String mapperLocations = null;
     
     public EnhancedConfig() {
     }
@@ -46,6 +48,12 @@ public class EnhancedConfig {
                 sqlFactoryName = "sqlSessionFactory";
             }
             this.sqlSessionFactory = sqlFactoryName;
+        }
+        {
+            String locations = element.getAttribute(ATTR_MAPPER_LOCATIONS);
+            if (StringUtils.isNotEmpty(locations)) {
+                this.mapperLocations = locations;
+            }
         }
     }
     
@@ -77,6 +85,12 @@ public class EnhancedConfig {
                 sqlFactoryName = "sqlSessionFactory";
             }
             this.sqlSessionFactory = sqlFactoryName;
+        }
+        {
+            String[] locations = (String[])map.get("mapperLocations");
+            if (locations != null && locations.length > 0) {
+                this.mapperLocations = JoinerSplitters.getJoiner(",").join(locations);
+            }
         }
     }
 
@@ -110,5 +124,9 @@ public class EnhancedConfig {
 
     public void setPostfix(String postfix) {
         this.postfix = postfix;
+    }
+    
+    public String getMapperLocations() {
+        return mapperLocations;
     }
 }

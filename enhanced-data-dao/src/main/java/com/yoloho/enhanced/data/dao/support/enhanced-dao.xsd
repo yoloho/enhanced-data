@@ -43,6 +43,17 @@
 					<xsd:restriction base="xsd:string" />
 				</xsd:simpleType>
 			</xsd:attribute>
+            <xsd:attribute name="mapper-locations" default="">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Other mappers (xml) files to load, eg. "classpath:/mybatis/*.xml",
+                    "," separated to multiple locations.
+                    ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string" />
+                </xsd:simpleType>
+            </xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
     <xsd:element name="druid-monitor">

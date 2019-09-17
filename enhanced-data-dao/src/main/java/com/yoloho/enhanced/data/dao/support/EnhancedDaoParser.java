@@ -9,6 +9,7 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -58,6 +59,9 @@ public class EnhancedDaoParser extends AbstractSingleBeanDefinitionParser {
             BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(EnhancedDaoScanner.class);
             builder.setLazyInit(false);
             builder.addConstructorArgReference(config.getSqlSessionFactory());
+            if (StringUtils.isNoneEmpty(config.getMapperLocations())) {
+                builder.addPropertyValue("mapperLocations", config.getMapperLocations());
+            }
             registry.registerBeanDefinition(EnhancedDaoScanner.class.getName() + "#" + atomicBeanId.getAndIncrement(),
                     builder.getBeanDefinition());
         }

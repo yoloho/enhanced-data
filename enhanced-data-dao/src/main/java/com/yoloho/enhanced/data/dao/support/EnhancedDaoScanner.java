@@ -8,6 +8,7 @@ import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 
 /**
  * 扫描包下注解
@@ -17,9 +18,11 @@ import org.slf4j.LoggerFactory;
  */
 public class EnhancedDaoScanner {
     private final static Logger logger = LoggerFactory.getLogger(EnhancedDaoScanner.class.getSimpleName());
+    private SqlSessionFactory factory;
 
     public EnhancedDaoScanner(SqlSessionFactory sqlSessionFactory) throws IOException {
         logger.info("register mapper to {}", sqlSessionFactory);
+        this.factory = sqlSessionFactory;
         try {
             String[] paths = new String[] {"com/yoloho/enhanced/data/dao/xml/enhanced-dao-generic.xml", "/com/yoloho/enhanced/data/dao/xml/enhanced-dao-generic.xml"};
             InputStream in = null;
@@ -29,13 +32,28 @@ public class EnhancedDaoScanner {
                     break;
                 }
             }
-            XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(in, sqlSessionFactory.getConfiguration(),
-                    "enhanced-dao-generic.xml", sqlSessionFactory.getConfiguration().getSqlFragments());
-            xmlMapperBuilder.parse();
+            this.parseStream("enhanced-dao-generic.xml", in);
+            in.close();
         } catch (Exception e) {
             logger.error("can not locate generic mapping resource", e);
         } finally {
             ErrorContext.instance().reset();
+        }
+    }
+    
+    public void parseStream(String resourceName, InputStream in) {
+        XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(in, this.factory.getConfiguration(),
+                resourceName, this.factory.getConfiguration().getSqlFragments());
+        xmlMapperBuilder.parse();
+    }
+    
+    public void setMapperLocations(Resource[] resources) {
+        for (Resource resource : resources) {
+            try (InputStream in = resource.getInputStream()) {
+                parseStream(resource.getFilename(), in);
+            } catch (IOException e) {
+                logger.error("Error to open stream on {}", resource);
+            }
         }
     }
 }
