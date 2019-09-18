@@ -14,11 +14,13 @@ public class BuildContext {
     private Class<?> clazz;
     private ClassInfo clazzInfo;
     private EnhancedConfig config;
+    private String scannerBeanName;
 
-    public BuildContext(Class<?> clazz, ClassInfo clazzInfo, EnhancedConfig config) {
+    public BuildContext(Class<?> clazz, ClassInfo clazzInfo, EnhancedConfig config, String scannerBean) {
         this.clazz = clazz;
         this.clazzInfo = clazzInfo;
         this.config = config;
+        this.scannerBeanName = scannerBean;
     }
 
     public Class<?> getClazz() {
@@ -39,6 +41,10 @@ public class BuildContext {
 
     public EnhancedConfig getConfig() {
         return config;
+    }
+    
+    public String getScannerBeanName() {
+        return scannerBeanName;
     }
 
 }

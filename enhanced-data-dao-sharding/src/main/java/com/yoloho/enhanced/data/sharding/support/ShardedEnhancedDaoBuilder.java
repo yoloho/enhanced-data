@@ -3,6 +3,8 @@ package com.yoloho.enhanced.data.sharding.support;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 
 import com.yoloho.enhanced.common.util.StringUtil;
@@ -15,8 +17,9 @@ import com.yoloho.enhanced.data.sharding.api.ShardingInfo;
 import com.yoloho.enhanced.data.sharding.impl.ShardedDaoImpl;
 
 public class ShardedEnhancedDaoBuilder implements DaoBuilder {
-
     final static private Logger logger = LoggerFactory.getLogger(ShardedEnhancedDaoBuilder.class);
+    
+    private BuildContext context;
 
     @Override
     public EnhancedType getType() {
@@ -25,6 +28,7 @@ public class ShardedEnhancedDaoBuilder implements DaoBuilder {
 
     @Override
     public BeanWrapper build(BuildContext buildContext, String sqlFactoryName) {
+        this.context = buildContext;
         Class<?> entityClz = buildContext.getClazz();
         Sharded curAnnotation = entityClz.getAnnotation(Sharded.class);
         if (curAnnotation != null) {
@@ -95,6 +99,9 @@ public class ShardedEnhancedDaoBuilder implements DaoBuilder {
         BeanDefinitionBuilder daoBuilder = BeanDefinitionBuilder.genericBeanDefinition(ShardedDaoImpl.class);
         daoBuilder.addConstructorArgValue(shardedInfo);
         daoBuilder.addConstructorArgReference(sqlFactoryName);
+        daoBuilder.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_NAME);
+        daoBuilder.setRole(BeanDefinition.ROLE_APPLICATION);
+        daoBuilder.addDependsOn(context.getScannerBeanName());
         return BeanWrapper.instance(shardedInfo.getDao(), daoBuilder.getBeanDefinition());
     }
 

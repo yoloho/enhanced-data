@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -54,6 +55,7 @@ public class EnhancedDaoParser extends AbstractSingleBeanDefinitionParser {
      * @param registry
      */
     public static void scan(EnhancedConfig config, BeanDefinitionRegistry registry) {
+        String scannerBeanName = EnhancedDaoScanner.class.getName() + "#" + atomicBeanId.getAndIncrement();
         {
             // xml mapper
             BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(EnhancedDaoScanner.class);
@@ -62,8 +64,8 @@ public class EnhancedDaoParser extends AbstractSingleBeanDefinitionParser {
             if (StringUtils.isNoneEmpty(config.getMapperLocations())) {
                 builder.addPropertyValue("mapperLocations", config.getMapperLocations());
             }
-            registry.registerBeanDefinition(EnhancedDaoScanner.class.getName() + "#" + atomicBeanId.getAndIncrement(),
-                    builder.getBeanDefinition());
+            builder.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
+            registry.registerBeanDefinition(scannerBeanName, builder.getBeanDefinition());
         }
         logger.info("init enhanced dao scanning on: {}", config.getScanPath());
         ScanResult scanResult = new FastClasspathScanner(config.getScanPath().toArray(new String[]{}))
@@ -90,7 +92,7 @@ public class EnhancedDaoParser extends AbstractSingleBeanDefinitionParser {
         	EnhancedType enhanceType = getEnhancedType(clazz);
         	//构建Dao Bean
         	BeanWrapper daoWarapper = enhancedDaoBuilder.get(enhanceType).build(
-        			new BuildContext(clazz, entityInfo, config), 
+        			new BuildContext(clazz, entityInfo, config, scannerBeanName), 
         			config.getSqlSessionFactory());
         	
         	//注册Dao Bean至Spring

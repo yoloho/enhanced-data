@@ -3,6 +3,8 @@ package com.yoloho.enhanced.data.dao.support.builder;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 
 import com.yoloho.enhanced.common.util.StringUtil;
@@ -58,6 +60,9 @@ public class EnhancedDaoBuilder implements DaoBuilder{
         daoBuilder.addConstructorArgValue(classInfo.getClassName());
         daoBuilder.addConstructorArgValue(tableName);
         daoBuilder.addConstructorArgReference(sqlFactoryName);
+        daoBuilder.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_NAME);
+        daoBuilder.setRole(BeanDefinition.ROLE_APPLICATION);
+        daoBuilder.addDependsOn(buildContext.getScannerBeanName());
 
         return BeanWrapper.instance(beanName, daoBuilder.getBeanDefinition());
 	}
