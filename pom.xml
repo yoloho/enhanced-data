@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.yoloho.enhanced.parent</groupId>
         <artifactId>enhanced-parent</artifactId>
-        <version>1.0.12</version>
+        <version>1.0.15</version>
     </parent>
     <groupId>com.yoloho.enhanced.data</groupId>
     <artifactId>enhanced-data-parent</artifactId>
@@ -14,7 +14,7 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
     <properties>
-        <revision>1.1.6</revision>
+        <revision>1.1.7</revision>
     </properties>
     <modules>
         <module>enhanced-data-dao-api</module>

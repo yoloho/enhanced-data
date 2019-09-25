@@ -1,5 +1,6 @@
 package com.yoloho.enhanced.data.cache.lock;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -10,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -39,7 +41,7 @@ public class DistributedLockTest {
     
     @Test
     public void customLockTest() {
-        
+        AtomicInteger atomicInteger = new AtomicInteger();     
         DistributedLock<Long> lock = new DistributedLock<>(new DistributedLock.LockSupport() {
             private ConcurrentMap<String, String> data = new ConcurrentHashMap<>();
             
@@ -49,8 +51,9 @@ public class DistributedLockTest {
             }
             
             @Override
-            public void keep(String key, int keepInSeconds) {
-                // no need
+            public void keep(String key, String value, int keepInSeconds) {
+                data.put(key, value);
+                atomicInteger.incrementAndGet();
             }
             
             @Override
@@ -71,6 +74,9 @@ public class DistributedLockTest {
         assertTrue(lock.tryToLock(1L));
         assertFalse(lock.tryToLock(1L));
         assertTrue(lock.tryToLock(2L));
+        lock.keepLock(2L);
+        lock.keepLock(2L);
+        assertEquals(2, atomicInteger.get());
         assertTrue(lock.unlock(2L));
         try {
             lock.lock(1L, 10, TimeUnit.MILLISECONDS);

@@ -35,12 +35,14 @@ public class DistributedLock<T> {
      */
     public static interface LockSupport {
         /**
-         * 保持锁至少从现在起keepInSeconds秒数
+         * Ensure the lock data in storage won't disappear during the period and update the content 
+         * 保持锁至少从现在起keepInSeconds秒数不过期，并更新锁内容
          * 
          * @param key
+         * @param value
          * @param keepInSeconds
          */
-        void keep(String key, int keepInSeconds);
+        void keep(String key, String value, int keepInSeconds);
         /**
          * 检查指定的锁是否存在
          * 
@@ -95,8 +97,8 @@ public class DistributedLock<T> {
             }
             
             @Override
-            public void keep(String key, int keepInSeconds) {
-                redisService.expire(key, keepInSeconds);
+            public void keep(String key, String value, int keepInSeconds) {
+                redisService.set(key, value, keepInSeconds);
             }
             
             @Override
@@ -149,8 +151,24 @@ public class DistributedLock<T> {
      * @param key
      * @param keepInSeconds 继续保持该锁的秒数
      */
-    public void keepLock(T key, int keepInSeconds) {
-        lockSupport.keep(lockKey(key), keepInSeconds);
+    public void keepLock(T key) {
+        String lockKey = lockKey(key);
+        String value = lockSupport.get(lockKey);
+        if (StringUtils.isEmpty(value)) {
+            return;
+        }
+        int pos = value.indexOf('|');
+        if (pos < 1) {
+            return;
+        }
+        // uuid|timestamp
+        String uuid = value.substring(0, pos);
+        if (!StringUtils.equals(uuid, this.uuid)) {
+            // uuid not match
+            return;
+        }
+        value = value.substring(0, pos + 1) + System.currentTimeMillis();
+        lockSupport.keep(lockKey, value, expireInSeconds);
     }
     
     /**
