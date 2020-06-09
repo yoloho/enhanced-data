@@ -3,6 +3,7 @@ package com.yoloho.enhanced.data.dao.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -718,6 +719,24 @@ public class EnhancedDaoImplTest {
             Assert.assertTrue(bean.getId() == 0);
         }
         {
+            //批量带重复插入
+            UnitTestUserSignature bean = new UnitTestUserSignature();
+            bean.setUid(10);
+            bean.setSize(111);
+            bean.setId(0);
+            bean.setContent("sign 2");
+            UnitTestUserSignature bean1 = new UnitTestUserSignature();
+            bean1.setUid(100);
+            bean1.setSize(111);
+            bean1.setId(0);
+            bean.setContent("sign 100");
+            List<UnitTestUserSignature> beanList = daoSignature.insertAndReturn(Arrays.asList(bean, bean1), true);
+            Assert.assertEquals(2, beanList.size());
+            Assert.assertEquals(new Integer(0), beanList.get(0).getId());
+            Assert.assertNotEquals(new Integer(0), beanList.get(1).getId());
+   
+        }
+        {
             UnitTestUserSignature bean = daoSignature.get("uid", 10);
             assertNotNull(bean);
             assertEquals(10, bean.getUid());
@@ -761,7 +780,7 @@ public class EnhancedDaoImplTest {
         }
         {
             //清理
-            daoSignature.remove(new DynamicQueryFilter().equalPair("uid", 10).getQueryData());
+            daoSignature.remove(new DynamicQueryFilter().in("uid", Arrays.asList(10, 100)).getQueryData());
         }
     }
 }

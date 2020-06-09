@@ -409,20 +409,28 @@ public class EnhancedDaoImpl<T, PK extends Serializable> extends SqlSessionDaoSu
         return insertAndReturn(beanList, ignore, false);
     }
         
-    @SuppressWarnings("unchecked")
     private List<T> insertAndReturn(List<T> beanList, boolean ignore, boolean replace) {
-        //ignore下，存在被忽略的行时，mybatis会按顺序设置autoincrement id，所以这种情况下不能走list
-        if (beanList.size() > 0 && (ignore || replace)) {
-            List<T> list = Lists.newArrayList();
-            for (T bean : beanList) {
-                list.addAll(_insertAndReturn(Lists.newArrayList(bean), ignore, replace));
-            }
-            return list;
-        }
         return _insertAndReturn(beanList, ignore, replace);
     }
     
-    @SuppressWarnings("unchecked")
+    private void setAutoincreKeyForList(List<T> beanList, BatchResult batchResult, int offset) {
+        int count = batchResult.getParameterObjects().size();
+        for (int i = 0; i < count; i++) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> dataReturn = (Map<String, Object>)batchResult.getParameterObjects().get(i);
+            if (dataReturn.containsKey(KEY_AUTO_INCREMENT)) {
+                long autoIncrementKey = NumberUtils.toLong(dataReturn.get(KEY_AUTO_INCREMENT).toString(), 0);
+                if (autoIncrementKey > 0) {
+                    if (offset + i >= beanList.size()) {
+                        logger.warn("Results from mybatis out of bounds");
+                        break;
+                    }
+                    setAutoIncrementField(beanList.get(offset + i), autoIncrementKey);
+                }
+            }
+        }
+    }
+    
     private List<T> _insertAndReturn(List<T> beanList, boolean ignore, boolean replace) {
         try {
             List<String> insertProperyNameList = Lists.newArrayList();
@@ -457,7 +465,7 @@ public class EnhancedDaoImpl<T, PK extends Serializable> extends SqlSessionDaoSu
                 int len = beanList.size();
                 List<EnhancedCondition> dataList = Lists.newArrayListWithCapacity(len);
                 try (SqlSession session = sqlSessionFactory.openSession(ExecutorType.BATCH)) {
-                    int last = 0;
+                    int offset = 0;
                     int cur = 0;
                     for (T bean : beanList) {
                         EnhancedCondition data = new EnhancedCondition(dataBase);
@@ -469,33 +477,18 @@ public class EnhancedDaoImpl<T, PK extends Serializable> extends SqlSessionDaoSu
                             logger.info("reach a batch");
                             List<BatchResult> results = session.flushStatements();
                             if (results.size() > 0) {
-                                BatchResult batchResult = results.get(0);
-                                int count = batchResult.getParameterObjects().size();
-                                for (int i = 0; i < count; i++) {
-                                    Map<String, Object> dataReturn = (Map<String, Object>)batchResult.getParameterObjects().get(i);
-                                    if (dataReturn.containsKey(KEY_AUTO_INCREMENT)) {
-                                        long autoIncrementKey = NumberUtils.toLong(dataReturn.get(KEY_AUTO_INCREMENT).toString(), 0);
-                                        if (autoIncrementKey > 0) {
-                                            setAutoIncrementField(beanList.get(i + last), autoIncrementKey);
-                                        }
-                                    }
+                                for (BatchResult batchResult : results) {
+                                    setAutoincreKeyForList(beanList, batchResult, offset);
+                                    offset += batchResult.getParameterObjects().size();
                                 }
                             }
-                            last = cur;
                         }
                     }
                     List<BatchResult> results = session.flushStatements();
                     if (results.size() > 0) {
-                        BatchResult batchResult = results.get(0);
-                        int count = batchResult.getParameterObjects().size();
-                        for (int i = 0; i < count; i++) {
-                            Map<String, Object> dataReturn = (Map<String, Object>)batchResult.getParameterObjects().get(i);
-                            if (dataReturn.containsKey(KEY_AUTO_INCREMENT)) {
-                                long autoIncrementKey = NumberUtils.toLong(dataReturn.get(KEY_AUTO_INCREMENT).toString(), 0);
-                                if (autoIncrementKey > 0) {
-                                    setAutoIncrementField(beanList.get(i + last), autoIncrementKey);
-                                }
-                            }
+                        for (BatchResult batchResult : results) {
+                            setAutoincreKeyForList(beanList, batchResult, offset);
+                            offset += batchResult.getParameterObjects().size();
                         }
                     }
                     session.commit();
