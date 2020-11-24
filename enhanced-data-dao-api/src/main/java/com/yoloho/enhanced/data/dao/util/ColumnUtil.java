@@ -28,6 +28,7 @@ public class ColumnUtil {
      * "@parentId@"
      */
     private final static Pattern patternFieldNamePlaceHolder = Pattern.compile("@([a-zA-Z0-9_-]+)@");
+    private final static Pattern PATTERN_FIELD_NAME = Pattern.compile("^[a-z0-9\\-_]+$");
     
     private final static LoadingCache<Class<?>, Map<String, String>> fieldsNameCache = CacheBuilder.newBuilder()
             .expireAfterAccess(1800, TimeUnit.SECONDS)
@@ -96,5 +97,19 @@ public class ColumnUtil {
         }
         matcher.appendTail(sb);
         return sb.toString();
+    }
+    
+    /**
+     * Check if the name is in field name form.
+     * 
+     * @param name
+     * @return
+     */
+    public static boolean isFieldName(String name) {
+        if (StringUtils.isEmpty(name)) {
+            return false;
+        }
+        Matcher m = PATTERN_FIELD_NAME.matcher(name);
+        return m.find();
     }
 }

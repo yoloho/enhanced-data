@@ -39,7 +39,10 @@ public class SortCommandImpl implements QueryCommand{
 	}
 	
 	public String getPartSql() {
-        return new StringBuilder(StringUtil.toUnderline(sortName))
+        return new StringBuilder()
+                .append("`")
+                .append(StringUtil.toUnderline(sortName))
+                .append("`")
                 .append(" ")
                 .append(isDesc ? "desc" : "asc")
                 .toString();

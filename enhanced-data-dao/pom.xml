@@ -19,7 +19,6 @@
         <dependency>
             <groupId>com.yoloho.enhanced.data</groupId>
             <artifactId>enhanced-data-dao-api</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <!-- commons -->
         <dependency>
@@ -85,6 +84,11 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
         </dependency>
     </dependencies>
     <build>

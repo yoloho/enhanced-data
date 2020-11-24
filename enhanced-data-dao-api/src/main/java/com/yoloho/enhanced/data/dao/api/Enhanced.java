@@ -19,23 +19,28 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 public @interface Enhanced {
     /**
-     * Name of the auto generated bean<br>
+     * Name of the auto generated bean
+     * <p>
      * By default, it's like:<br>
-     * UserEnhancedDao<br>
-     * While "EnhancedDao" is the prefix setting in {@link EnableEnhancedDao}.
+     * <b>userEnhancedDao</b><br>
+     * While "EnhancedDao" is the postfix setting in EnableEnhancedDao.
+     * </p>
      * <p>
      * You can change it to a new one by setting this though it's better to follow general principles.
+     * </p>
      */
     String name() default "";
 
     /**
      * The table is binded with.
      * <p>
-     * If the table can not be auto mapped, eg.<br> 
-     * UserDetail => user_detail<br>
-     * UserDDetail => user_d_detail<br>
-     * <br>
-     * You can customize actual table name by this.
+     * If the table can not be auto mapped, as:
+     * <pre>
+     * * UserDetail =&gt; user_detail
+     * * UserDDetail =&gt; user_d_detail
+     * </pre>
+     * You can spacify table name.
+     * </p>
      */
     String tableName() default "";
 

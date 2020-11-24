@@ -1,5 +1,8 @@
 package com.yoloho.enhanced.data.util;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -32,6 +35,16 @@ public class ColumnUtilTest {
             this.tmpName = tmpName;
         }
         
+    }
+    
+    public void isFieldName() {
+        assertFalse(ColumnUtil.isFieldName(null));
+        assertFalse(ColumnUtil.isFieldName(""));
+        assertFalse(ColumnUtil.isFieldName(" "));
+        assertFalse(ColumnUtil.isFieldName(" abc_abc"));
+        assertTrue(ColumnUtil.isFieldName("abc_"));
+        assertTrue(ColumnUtil.isFieldName("abc_adfrf"));
+        assertTrue(ColumnUtil.isFieldName("_abc_adfrf"));
     }
     
     @Test

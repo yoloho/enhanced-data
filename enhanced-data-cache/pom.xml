@@ -114,13 +114,19 @@
                 <configuration>
                     <argLine>-javaagent:${user.home}/.m2/repository/org/aspectj/aspectjweaver/1.9.2/aspectjweaver-1.9.2.jar</argLine>
                 </configuration>
-                <goals>test</goals>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <!-- aspectj 编译插件，必须在打jar的时候把@Aspect注释的类预编译好，否则jar方式引入的时候不会被织入方法 -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
+                <groupId>com.nickwongdev</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
-                <version>1.9</version>
+                <version>1.12.6</version>
                 <configuration>
                     <verbose>true</verbose>
                     <privateScope>true</privateScope>

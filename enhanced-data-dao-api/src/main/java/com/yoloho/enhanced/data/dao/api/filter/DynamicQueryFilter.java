@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.yoloho.enhanced.common.util.StringUtil;
@@ -27,7 +25,6 @@ import com.yoloho.enhanced.data.dao.util.ColumnUtil;
  */
 public class DynamicQueryFilter implements java.io.Serializable {
 	private static final long serialVersionUID = 8790528179232633456L;
-	public static final Logger logger = LoggerFactory.getLogger(DynamicQueryFilter.class);
 
 	private int offset = 0;
 	private int limit = 20;
@@ -88,7 +85,7 @@ public class DynamicQueryFilter implements java.io.Serializable {
      * 但注意类似检索用不到索引，非管理后台的功能请注意加缓存，并评估好数据量
      * 
      * @param fieldName
-     * @param collection
+     * @param value
      * @return
      */
     public DynamicQueryFilter inJoinedString(String fieldName, String value) {
@@ -325,6 +322,10 @@ public class DynamicQueryFilter implements java.io.Serializable {
 		String fieldKey = operation + "_" + property + "_" + (filterName != null && filterName.length() > 0 ? (filterName + "_") : "") + parameterMap.size();
 		// to underline format
 		String fieldName = StringUtil.toUnderline(property);
+		String fieldNameQuoted = fieldName;
+		if (ColumnUtil.isFieldName(fieldName)) {
+		    fieldNameQuoted = "`" + fieldName + "`";
+		}
 
 		if (value instanceof ExprEntry) {
 		    ExprEntry expr = (ExprEntry) value;
@@ -364,7 +365,7 @@ public class DynamicQueryFilter implements java.io.Serializable {
             }
 		    if (name == null) {
 		        //普通处理方式
-    		    name = fieldName;
+    		    name = fieldNameQuoted;
 		    }
             return String.format("%s%s%s", name, op,
                     ColumnUtil.parseColumnNames(property, expr.getValue(), expr.getClz()));
@@ -372,47 +373,47 @@ public class DynamicQueryFilter implements java.io.Serializable {
 		String fieldKeyReplace = String.format("#{%s}", fieldKey);
 		switch (operation) {
             case lessThan:
-                partHql = (new StringBuilder(String.valueOf(fieldName))).append(" <").append(fieldKeyReplace).toString();
+                partHql = (new StringBuilder(String.valueOf(fieldNameQuoted))).append(" < ").append(fieldKeyReplace).toString();
                 parameterMap.put(fieldKey, value);
                 break;
             case greatThan:
-                partHql = (new StringBuilder(String.valueOf(fieldName))).append(" > ").append(fieldKeyReplace).toString();
+                partHql = (new StringBuilder(String.valueOf(fieldNameQuoted))).append(" > ").append(fieldKeyReplace).toString();
                 parameterMap.put(fieldKey, value);
                 break;
             case greatOrEqual:
-                partHql = (new StringBuilder(String.valueOf(fieldName))).append(" >= ").append(fieldKeyReplace).toString();
+                partHql = (new StringBuilder(String.valueOf(fieldNameQuoted))).append(" >= ").append(fieldKeyReplace).toString();
                 parameterMap.put(fieldKey, value);
                 break;
             case lessOrEqual:
-                partHql = (new StringBuilder(String.valueOf(fieldName))).append(" <= ").append(fieldKeyReplace).toString();
+                partHql = (new StringBuilder(String.valueOf(fieldNameQuoted))).append(" <= ").append(fieldKeyReplace).toString();
                 parameterMap.put(fieldKey, value);
                 break;
             case like:
-                partHql = (new StringBuilder(String.valueOf(fieldName))).append(" like ").append(fieldKeyReplace).toString();
+                partHql = (new StringBuilder(String.valueOf(fieldNameQuoted))).append(" like ").append(fieldKeyReplace).toString();
                 parameterMap.put(fieldKey, "%" + value + "%");
                 break;
             case startsWith:
-                partHql = (new StringBuilder(String.valueOf(fieldName))).append(" like ").append(fieldKeyReplace).toString();
+                partHql = (new StringBuilder(String.valueOf(fieldNameQuoted))).append(" like ").append(fieldKeyReplace).toString();
                 parameterMap.put(fieldKey, value + "%");
                 break;
             case endsWith:
-                partHql = (new StringBuilder(String.valueOf(fieldName))).append(" like ").append(fieldKeyReplace).toString();
+                partHql = (new StringBuilder(String.valueOf(fieldNameQuoted))).append(" like ").append(fieldKeyReplace).toString();
                 parameterMap.put(fieldKey, "%" + value);
                 break;
             case isNull:
-                partHql = (new StringBuilder(String.valueOf(fieldName))).append(" is null ").toString();
+                partHql = (new StringBuilder(String.valueOf(fieldNameQuoted))).append(" is null ").toString();
                 break;
             case isNotNull:
-                partHql = (new StringBuilder(String.valueOf(fieldName))).append(" is not null ").toString();
+                partHql = (new StringBuilder(String.valueOf(fieldNameQuoted))).append(" is not null ").toString();
                 break;
             case inJoinString:
-                partHql = String.format("concat(',', `%s`, ',') like %s", fieldName, fieldKeyReplace);
+                partHql = String.format("concat(',', `%s`, ',') like %s", fieldNameQuoted, fieldKeyReplace);
                 parameterMap.put(fieldKey, "%," + value + ",%");
                 break;
             case in:
             case notIn: {
                 List<String> valueList = ParamUtil.getCollection(value);
-                StringBuilder sb = new StringBuilder(String.valueOf(fieldName))
+                StringBuilder sb = new StringBuilder(String.valueOf(fieldNameQuoted))
                         .append(operation == Operator.notIn ? " not  " : " ").append("in")
                         .append(" ( ");
                 for (int i = 0; i < valueList.size(); i++) {
@@ -426,20 +427,20 @@ public class DynamicQueryFilter implements java.io.Serializable {
                 break;
             }
             case notEqual:
-                partHql = (new StringBuilder(String.valueOf(fieldName))).append(" !=").append(fieldKeyReplace).toString();
+                partHql = (new StringBuilder(String.valueOf(fieldNameQuoted))).append(" != ").append(fieldKeyReplace).toString();
                 parameterMap.put(fieldKey, value);
                 break;
             case equal:
-                partHql = (new StringBuilder(String.valueOf(partHql))).append(fieldName).append(" =")
+                partHql = (new StringBuilder(String.valueOf(partHql))).append(fieldNameQuoted).append(" = ")
                         .append(fieldKeyReplace).toString();
                 parameterMap.put(fieldKey, value);
                 break;
             case lessOrEqualTimestamp:
-                partHql = fieldName + " <= FROM_UNIXTIME(" + fieldKeyReplace+")";
+                partHql = fieldNameQuoted + " <= FROM_UNIXTIME(" + fieldKeyReplace+")";
                 parameterMap.put(fieldKey, value);
                 break;
             case greatOrEqualTimestamp:
-                partHql = fieldName + " >= FROM_UNIXTIME(" + fieldKeyReplace+")";
+                partHql = fieldNameQuoted + " >= FROM_UNIXTIME(" + fieldKeyReplace+")";
                 parameterMap.put(fieldKey, value);
                 break;
 

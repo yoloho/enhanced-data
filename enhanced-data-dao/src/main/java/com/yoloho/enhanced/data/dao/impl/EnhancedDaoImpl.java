@@ -640,6 +640,7 @@ public class EnhancedDaoImpl<T, PK extends Serializable> extends SqlSessionDaoSu
         return null;
     }
     
+    @Override
     public <TT> int count(String fieldName, TT value) {
         return count(new DynamicQueryFilter().equalPair(fieldName, value).getQueryData());
     }

@@ -16,7 +16,6 @@ import com.google.common.collect.Sets;
 import com.yoloho.enhanced.common.util.JoinerSplitters;
 import com.yoloho.enhanced.data.dao.api.ExprEntry;
 import com.yoloho.enhanced.data.dao.api.IgnoreKey;
-import com.yoloho.enhanced.data.dao.api.filter.DynamicQueryFilter;
 import com.yoloho.enhanced.data.dao.api.filter.FieldCommand.Operator;
 import com.yoloho.enhanced.data.dao.api.filter.FieldCommand.Type;
 
@@ -149,14 +148,14 @@ public class DynamicQueryFilterTest {
     public void exprTest() {
         DynamicQueryFilter filter = new DynamicQueryFilter();
         filter.expr("id", Operator.equal, new ExprEntry("@displayName@ + 1", Demo.class));
-        Assert.assertEquals("id = `display_name` + 1", filter.getQueryData().getWhere());
+        Assert.assertEquals("`id` = `display_name` + 1", filter.getQueryData().getWhere());
         filter = new DynamicQueryFilter();
         filter.expr("displayName", Operator.greatOrEqual, new ExprEntry("1", Demo.class));
-        Assert.assertEquals("display_name >= 1", filter.getQueryData().getWhere());
+        Assert.assertEquals("`display_name` >= 1", filter.getQueryData().getWhere());
         filter = new DynamicQueryFilter();
         //注意，这里仅是个单元测试，不建议这么用
-        filter.expr("length(displayName)", Operator.greatOrEqual, new ExprEntry("unix_timestam()", Demo.class));
-        Assert.assertEquals("length(display_name) >= unix_timestam()", filter.getQueryData().getWhere());
+        filter.expr("length(`displayName`)", Operator.greatOrEqual, new ExprEntry("unix_timestam()", Demo.class));
+        Assert.assertEquals("length(`display_name`) >= unix_timestam()", filter.getQueryData().getWhere());
         filter = new DynamicQueryFilter();
         filter.expr("length(@displayName@)", Operator.greatOrEqual, new ExprEntry("unix_timestam()", Demo.class));
         Assert.assertEquals("length(`display_name`) >= unix_timestam()", filter.getQueryData().getWhere());
@@ -167,7 +166,7 @@ public class DynamicQueryFilterTest {
         DynamicQueryFilter filter = new DynamicQueryFilter();
         filter.orderBy("a", true)
               .orderBy("b", false);
-        assertEquals("order by a desc, b asc", filter.getQueryData().get("SortSQL"));
+        assertEquals("order by `a` desc, `b` asc", filter.getQueryData().get("SortSQL"));
     }
 
 }
